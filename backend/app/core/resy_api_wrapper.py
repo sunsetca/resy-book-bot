@@ -1,9 +1,8 @@
 from typing import Dict
-import requests, logging
-import os
-from importlib import import_module
-from dotenv import load_dotenv
-load_dotenv()
+
+import logging
+import requests
+
 
 class ResyApiWrapper:
 	base_url = "https://api.resy.com"
@@ -12,11 +11,10 @@ class ResyApiWrapper:
 	book_res_url = f"{base_url}/3/book"
 	find_res_url = f"{base_url}/4/find"
 	api_wrapper_logger = logging.getLogger(__name__)
-	config = getattr(import_module('bot.bot_config'), os.environ['ACTIVE_ENV'])
 
-	def __init__(self, resy_token=''):
+	def __init__(self, resy_api_key, resy_token=''):
 		self.session = requests.session()
-		self.session.headers.update({"Authorization": f"ResyAPI api_key={self.config.RESY_API_KEY}"})
+		self.session.headers.update({"Authorization": f"ResyAPI api_key={resy_api_key}"})
 		self.resy_token = resy_token
 
 	def auth_user(self, user_creds):

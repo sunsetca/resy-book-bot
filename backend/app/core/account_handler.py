@@ -1,9 +1,8 @@
 from typing import Dict
 
+from firebase_admin import App as FirebaseAdminApp
 from firebase_admin.auth import Client as FirebaseAuthClient, UserRecord
 from google.cloud.firestore import Client as FirestoreClient
-from firebase_admin import App as FirebaseAdminApp
-
 
 
 class AccountHandler:
@@ -30,7 +29,7 @@ class AccountHandler:
 		self.firestore_client.collection("resy_tokens").document(user_id).create({"_token": user_token})
 		return
 
-	def retrieve_resy_token(self, user_id):
+	def get_resy_token(self, user_id):
 		resy_token = self.firestore_client.collection(user_id).document("_token").get()
 		if resy_token.exists:
 			token = resy_token.to_dict()
