@@ -1,24 +1,37 @@
-from flask import Flask
-from app.core.account_handler import AccountHandler
-from bot.resy_api_wrapper import ResyApiWrapper
 import firebase_admin
 import google.auth
+from dotenv import load_dotenv
+from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 from google.cloud.firestore import Client as FirestoreClient
 
+from app.core.account_handler import AccountHandler
+from app.core.resy_api_wrapper import ResyApiWrapper
+
+load_dotenv()
 import os
+
 credentials, project = google.auth.default()
 firebase_admin = firebase_admin.initialize_app(options={"projectId": project})
-firestore_client = FirestoreClient(project=project,credentials=credentials)
+firestore_client = FirestoreClient(project=project, credentials=credentials)
 account_handler = AccountHandler(firebase_admin, firestore_client)
-resy_wrapper = ResyApiWrapper()
+resy_wrapper = ResyApiWrapper(os.environ['RESY_API_KEY'])
+csrf = CSRFProtect()
 
-def create_app(test_config=None) -> Flask:
+from app.core.task_handler import TaskHandler
+
+task_handler = TaskHandler(project, os.environ['LOCATION'], os.environ['QUEUE'])
+
+
+def create_app(config_class=None) -> Flask:
 	app = Flask(__name__, instance_relative_config=True)
 
-	if test_config is None:
+	if config_class is None:
 		app.config.from_object("config.DevelopmentConfig")
 	else:
-		app.config.from_mapping(test_config)
+		app.config.from_object(f"config.{config_class}")
+
+	csrf.init_app(app)
 
 	try:
 		os.makedirs(app.instance_path)
@@ -26,9 +39,10 @@ def create_app(test_config=None) -> Flask:
 		pass
 
 	with app.app_context():
-		from app.routes import user, base
+		from app.routes import user, base, resy_interactions
 
 		app.register_blueprint(user.user_bp)
 		app.register_blueprint(base.base_bp)
+		app.register_blueprint(resy_interactions.resy_bp)
 
 	return app
