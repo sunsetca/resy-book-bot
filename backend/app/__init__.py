@@ -15,7 +15,7 @@ credentials, project = google.auth.default()
 firebase_admin = firebase_admin.initialize_app(options={"projectId": project})
 firestore_client = FirestoreClient(project=project, credentials=credentials)
 account_handler = AccountHandler(firebase_admin, firestore_client)
-resy_wrapper = ResyApiWrapper(os.environ['RESY_API_KEY'])
+resy_wrapper = ResyApiWrapper(os.environ['RESY_URL'],os.environ['RESY_API_KEY'])
 csrf = CSRFProtect()
 
 from app.core.task_handler import TaskHandler
@@ -27,10 +27,9 @@ def create_app(config_class=None) -> Flask:
 	app = Flask(__name__, instance_relative_config=True)
 
 	if config_class is None:
-		app.config.from_object("config.DevelopmentConfig")
+		app.config.from_object("app.config.DevelopmentConfig")
 	else:
-		app.config.from_object(f"config.{config_class}")
-
+		app.config.from_object(f"app.config.{config_class}")
 	csrf.init_app(app)
 
 	try:

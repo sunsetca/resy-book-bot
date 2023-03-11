@@ -1,6 +1,6 @@
 import json
 
-from flask import Blueprint, request
+from flask import Blueprint, request, Response
 
 from app import account_handler, task_handler
 
@@ -16,6 +16,6 @@ def execute():
 	resy_active_res_task['token'] = account_handler.get_resy_token(account_handler.get_user_id(task_body['email']))
 
 	if task_handler.execute_task(resy_active_res_task):
-		return 200
+		return Response("success", 200)
 	else:
-		return 500
+		return Response("failure", 500)

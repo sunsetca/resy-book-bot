@@ -11,8 +11,8 @@ from app.core.resy_api_wrapper import ResyApiWrapper
 
 
 class TaskHandler:
-	res_req_keys = {'email', 'res_date', 'venue_id'}
-	res_task_keys = {'email', 'party_size', 'res_date', 'table_type', 'venue_id'}
+	res_req_keys = {'email', 'res_day', 'venue_id'}
+	res_task_keys = {'email', 'party_size', 'res_day', 'res_times', 'table_type', 'venue_id'}
 	task_builder_logger = logging.getLogger(__name__)
 
 	def __init__(self, project, location, queue):
@@ -30,11 +30,9 @@ class TaskHandler:
 
 		# build and save payload to task
 		resy_task_payload = dict(filter(lambda key: key[0] in self.res_task_keys, payload.items()))
-		res_priority_queue = []
 		task['app_engine_http_request']['body'] = json.dumps(resy_task_payload).encode()
 
 		# create and save timestamp for task
-
 		timestamp = timestamp_pb2.Timestamp()
 		timestamp.FromDatetime(payload['task_live_date'].astimezone(timezone.utc))
 		task['schedule_time'] = timestamp
@@ -44,10 +42,13 @@ class TaskHandler:
 
 		# save the res request attempt
 		resy_task_req = dict(filter(lambda key: key[0] in self.res_req_keys, payload.items()))
-		resy_task_req['task_id'] = resp.name[resp.name.rindex('/'):]
-		firestore_client.collection("reservation_task_request").document(resy_task_req)
+		resy_task_req['task_id'] = resp.name[resp.name.rindex('/') + 1:]
+		firestore_client.collection("reservation_task_request").document(resy_task_req['task_id']).create(resy_task_req)
 		self.task_builder_logger.info(f"Saved task request {resy_task_req['task_id']}")
 		return resp
 
 	def execute_task(self, payload: Dict, resy_api: ResyApiWrapper):
+		# poll for venue slot
+		# build a details object
+		# book with details object
 		pass

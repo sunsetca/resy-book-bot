@@ -1,16 +1,16 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, DateField, DateTimeField, FloatField, FieldList, IntegerField, PasswordField, \
 	StringField, TimeField
-from wtforms.validators import InputRequired, Length
+from wtforms.validators import InputRequired
 
 
-class ResyLinkForm(FlaskForm):
+class ResyTokenForm(FlaskForm):
 	email = EmailField('email', validators=[InputRequired()])
-	password = PasswordField('password', validators=[InputRequired(), Length(min=5)])
+	resy_token = StringField('resy_token', validators=[InputRequired()])
 
 
 class ResyFindVenueForm(FlaskForm):
-	date = DateField('res_date', format='%Y-%m-%d', validators=[InputRequired()])
+	day = DateField('res_day', format='%m-%d-%Y', validators=[InputRequired()])
 	party_size = IntegerField('party_size', validators=[InputRequired()])
 	lat = FloatField('latitude', validators=[InputRequired()])
 	long = FloatField('longitude', validators=[InputRequired()])
@@ -23,8 +23,8 @@ class ResTimeForm(FlaskForm):
 
 
 class ResyReservationWatchForm(FlaskForm):
-	res_live_date = DateTimeField('res_live_date', format='%Y-%m-%d %H:%M:%S', validators=[InputRequired()])
-	res_date = DateField('res_date', format='%Y-%m-%d', validators=[InputRequired()])
+	res_live_date = DateTimeField('res_live_date', format='%m-%d-%Y %H:%M:%S', validators=[InputRequired()])
+	res_day = DateField('res_day', format='%m-%d-%Y', validators=[InputRequired()])
 	party_size = IntegerField('party_size', validators=[InputRequired()])
 	venue_id = IntegerField('venue_id')
 	res_times = FieldList(StringField('res_times', validators=[InputRequired()]))
