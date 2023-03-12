@@ -17,19 +17,22 @@ firestore_client = FirestoreClient(project=project, credentials=credentials)
 from .core.resy_api_wrapper import ResyApiWrapper
 from .core.account_handler import AccountHandler
 from .core.task_handler import TaskHandler
+from .core.resy_client import ResyClient
 
 account_handler = AccountHandler(firebase_admin, firestore_client)
 resy_wrapper = ResyApiWrapper(os.environ['RESY_URL'],os.environ['RESY_API_KEY'])
 task_handler = TaskHandler(project, os.environ['LOCATION'], os.environ['QUEUE'])
+resy_client = ResyClient(resy_wrapper)
 csrf = CSRFProtect()
 
-def create_app(config_class=None) -> Flask:
+def create_app() -> Flask:
 	app = Flask(__name__, instance_relative_config=True)
+	active_env = os.environ['ACTIVE_ENV']
 
-	if config_class is None:
+	if active_env is None:
 		app.config.from_object("app.config.DevelopmentConfig")
 	else:
-		app.config.from_object(f"app.config.{config_class}")
+		app.config.from_object(f"app.config.{active_env}")
 
 	csrf.init_app(app)
 
@@ -39,10 +42,11 @@ def create_app(config_class=None) -> Flask:
 		pass
 
 	with app.app_context():
-		from .routes import user, base, resy_interactions
+		from .routes import user, base, resy_interactions, bot
 
 		app.register_blueprint(user.user_bp)
 		app.register_blueprint(base.base_bp)
 		app.register_blueprint(resy_interactions.resy_bp)
+		app.register_blueprint(bot.resy_bot_bp)
 
 	return app

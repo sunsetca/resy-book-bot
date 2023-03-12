@@ -48,6 +48,5 @@ class TaskHandler:
 		return resp
 
 	def execute_task(self, payload: Dict, resy_client: ResyClient):
-		# poll for venue slot
-		self.task_builder_logger.info("Attempting to process task request {resy_task}".format(resy_task=payload['task_id']))
+		self.task_builder_logger.info("Attempting to process task request {venue}".format(venue=payload['venue_id']))
 		return resy_client.book_res(payload)
