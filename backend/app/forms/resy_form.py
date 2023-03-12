@@ -10,7 +10,7 @@ class ResyTokenForm(FlaskForm):
 
 
 class ResyFindVenueForm(FlaskForm):
-	day = DateField('res_day', format='%m-%d-%Y', validators=[InputRequired()])
+	day = DateField('res_day', format='%Y-%m-%d', validators=[InputRequired()])
 	party_size = IntegerField('party_size', validators=[InputRequired()])
 	lat = FloatField('latitude', validators=[InputRequired()])
 	long = FloatField('longitude', validators=[InputRequired()])
@@ -23,8 +23,8 @@ class ResTimeForm(FlaskForm):
 
 
 class ResyReservationWatchForm(FlaskForm):
-	res_live_date = DateTimeField('res_live_date', format='%m-%d-%Y %H:%M:%S', validators=[InputRequired()])
-	res_day = DateField('res_day', format='%m-%d-%Y', validators=[InputRequired()])
+	res_live_date = DateTimeField('res_live_date', format='%Y-%m-%d %H:%M:%S', validators=[InputRequired()])
+	res_day = DateField('res_day', format='%Y-%m-%d', validators=[InputRequired()])
 	party_size = IntegerField('party_size', validators=[InputRequired()])
 	venue_id = IntegerField('venue_id')
 	res_times = FieldList(StringField('res_times', validators=[InputRequired()]))

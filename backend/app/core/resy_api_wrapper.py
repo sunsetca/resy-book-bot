@@ -31,19 +31,14 @@ class ResyApiWrapper:
 		self.resy_token = resy_token
 		self.session.headers.update({"x-resy-auth-token": resy_token})
 
-	def find_venues(self, email, search_request: Dict):
+	def find_venue(self, email, search_request: Dict):
 		self.api_wrapper_logger.info(f"Attempting to get available reservations for {email}")
-		resy_url = f"{self.base_url}/4/find?" + urlencode(search_request)
-
-		return self.session.get(url=resy_url)
-	def get_reservation_details(self, date, party_size, config_id):
-		query_params = {
-			"day": date,
-			"party_size": party_size,
-			"config_id": config_id
-		}
-		self.api_wrapper_logger.info(f"Attempting to get reservation details for {config_id}")
-		return self.session.get(f"{self.base_url}/3/details", params=query_params)
+		find_venues_url = f"{self.base_url}/4/find?" + urlencode(search_request)
+		return self.session.get(url=find_venues_url)
+	def get_reservation_details(self, booking_request):
+		self.api_wrapper_logger.info(f"Attempting to get reservation details for {booking_request['config-id']}")
+		res_details_url = f"{self.base_url}/3/details" + urlencode(booking_request)
+		return self.session.get(res_details_url)
 
 	def create_reservation(self, payment_method_id, booking_token):
 		query_params = {
@@ -52,3 +47,7 @@ class ResyApiWrapper:
 		}
 		self.api_wrapper_logger.info(f"Attempting to create reservation for {booking_token}")
 		return self.session.post(f"{self.base_url}/3/book", data=query_params)
+
+	def get_res_list(self, user_id):
+		self.api_wrapper_logger.info(f"Attempting to check reservation for {user_id}")
+		return self.session.get(f"{self.base_url}/3/user/reservations")
