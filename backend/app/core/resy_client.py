@@ -65,11 +65,12 @@ class ResyClient:
 		return None
 
 	def find_live_reservations(self, venue_query, retry_interval_ms):
+		# set timeout to 20s to account for early live, you want to hit the window AT that time
 		return poll(
 			lambda: self.resy_api.find_venue(venue_query),
 			check_success=lambda resp: len(resp.json()['results']['venues'][0]['slots']) > 0,
 			step=retry_interval_ms,
-			timeout=10
+			timeout=20
 		)
 
 	def find_venue(self, email, query):

@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import timezone
+from datetime import timezone, timedelta
 from typing import Dict
 
 from google.cloud.tasks_v2 import CloudTasksClient, HttpMethod
@@ -34,8 +34,9 @@ class TaskHandler:
 		task['app_engine_http_request']['body'] = json.dumps(resy_task_payload).encode()
 
 		# create and save timestamp for task
+		wakeup = payload['res_live_date'] - timedelta(seconds=10)
 		timestamp = timestamp_pb2.Timestamp()
-		timestamp.FromDatetime(payload['res_live_date'].astimezone(timezone.utc))
+		timestamp.FromDatetime(wakeup.astimezone(timezone.utc))
 		task['schedule_time'] = timestamp
 
 		resp = self.task_client.create_task(parent=self.task_parent, task=task)
