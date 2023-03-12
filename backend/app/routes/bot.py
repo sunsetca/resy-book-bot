@@ -1,11 +1,13 @@
 import json
 import logging
+
 from flask import Blueprint, request
 
 from app import account_handler, task_handler, resy_client
 
 resy_bot_bp = Blueprint('resy-bot', __name__, url_prefix='/resy-bot')
 bot_logger = logging.getLogger("resy-bot-logger")
+
 
 @resy_bot_bp.route('/execute', methods=['POST'])
 def execute():

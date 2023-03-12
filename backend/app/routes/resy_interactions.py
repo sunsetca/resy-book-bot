@@ -2,7 +2,7 @@ import json
 
 from flask import Blueprint, Response, request
 
-from app import resy_wrapper, task_handler
+from app import resy_client, task_handler
 from app.forms import ResyFindVenueForm, ResyReservationWatchForm
 
 resy_bp = Blueprint('resy', __name__, url_prefix='/resy')
@@ -15,7 +15,6 @@ def search():
 			return Response(status=403)
 		venue_search_form = ResyFindVenueForm()
 		if venue_search_form.validate_on_submit():
-			resy_wrapper.set_resy_token(request.headers.get('RESY-AUTH-TOKEN'))
 			query_params = {
 				"lat": venue_search_form.lat.data,
 				"long": venue_search_form.long.data,
@@ -23,7 +22,7 @@ def search():
 				"party_size": venue_search_form.party_size.data,
 				"limit": 50
 			}
-			venues = resy_wrapper.find_venue(request.args.get('email'), query_params)
+			venues = resy_client.find_venue(request.args.get('email'), query_params)
 			return Response(response=json.dumps(venues.json()), status=200)
 		else:
 			print(venue_search_form.errors.items())

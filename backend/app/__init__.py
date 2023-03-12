@@ -1,13 +1,13 @@
 import firebase_admin
 import google.auth
+from dotenv import load_dotenv
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
-from dotenv import load_dotenv
 from google.cloud.firestore import Client as FirestoreClient
-
 
 load_dotenv()
 import os
+
 # external imports that need to be instantiated first for internal app dependencies
 credentials, project = google.auth.default()
 firebase_admin = firebase_admin.initialize_app(options={"projectId": project})
@@ -20,10 +20,11 @@ from .core.task_handler import TaskHandler
 from .core.resy_client import ResyClient
 
 account_handler = AccountHandler(firebase_admin, firestore_client)
-resy_wrapper = ResyApiWrapper(os.environ['RESY_URL'],os.environ['RESY_API_KEY'])
+resy_wrapper = ResyApiWrapper(os.environ['RESY_URL'], os.environ['RESY_API_KEY'])
 task_handler = TaskHandler(project, os.environ['LOCATION'], os.environ['QUEUE'])
 resy_client = ResyClient(resy_wrapper)
 csrf = CSRFProtect()
+
 
 def create_app() -> Flask:
 	app = Flask(__name__, instance_relative_config=True)

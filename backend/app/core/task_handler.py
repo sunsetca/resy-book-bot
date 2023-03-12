@@ -5,13 +5,14 @@ from typing import Dict
 
 from google.cloud.tasks_v2 import CloudTasksClient, HttpMethod
 from google.protobuf import timestamp_pb2
-from .resy_client import ResyClient
+
 from app import firestore_client
+from .resy_client import ResyClient
 
 
 class TaskHandler:
 	res_req_keys = {'email', 'res_day', 'venue_id'}
-	res_task_keys = {'email', 'party_size', 'res_day', 'res_times', 'payment_id','table_type', 'venue_id'}
+	res_task_keys = {'email', 'party_size', 'res_day', 'res_times', 'payment_id', 'table_type', 'venue_id'}
 
 	task_builder_logger = logging.getLogger(__name__)
 

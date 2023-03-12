@@ -1,5 +1,6 @@
-from typing import Dict
 import logging
+from typing import Dict
+
 from firebase_admin import App as FirebaseAdminApp
 from firebase_admin.auth import Client as FirebaseAuthClient, UserRecord
 from firebase_admin.auth import EmailAlreadyExistsError
@@ -8,6 +9,7 @@ from google.cloud.firestore import Client as FirestoreClient
 
 class AccountHandler:
 	account_handler_logger = logging.getLogger(__name__)
+
 	def __init__(self, firebase_admin: FirebaseAdminApp, firestore_client: FirestoreClient):
 		self.firebase_auth = FirebaseAuthClient(firebase_admin)
 		self.firestore_client = firestore_client
@@ -25,7 +27,6 @@ class AccountHandler:
 			self.account_handler_logger.error(f"{user_exists}:{user_registration['email']}")
 			return None
 
-
 	def get_user_id(self, email):
 		firebase_user: UserRecord = self.firebase_auth.get_user_by_email(email)
 		if firebase_user.uid:
@@ -41,7 +42,7 @@ class AccountHandler:
 		return
 
 	def get_resy_token(self, user_id):
-		resy_token = self.firestore_client.collection(user_id).document("_token").get()
+		resy_token = self.firestore_client.collection('resy_tokens').document(user_id).get()
 		if resy_token.exists:
 			token = resy_token.to_dict()
 			return token["_token"]

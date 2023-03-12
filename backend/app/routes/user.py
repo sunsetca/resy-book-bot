@@ -1,8 +1,10 @@
+import json
+
 from flask import Blueprint, Response, request
+
 from app import account_handler
 from app.forms.resy_form import ResyTokenForm
 from app.forms.user_account_forms import RegistrationForm
-import json
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -19,7 +21,8 @@ def register():
 	registered_user = account_handler.create_new_user_account(new_user)
 	if registered_user is None:
 		return Response("User already exists", 400)
-	return Response(response=json.dumps({"email": registered_user.email, "name": registered_user.display_name}), status=201)
+	return Response(response=json.dumps({"email": registered_user.email, "name": registered_user.display_name}),
+	                status=201)
 
 
 @user_bp.route('/authorize-resy', methods=['POST'])

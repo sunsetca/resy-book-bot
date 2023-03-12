@@ -36,6 +36,7 @@ Jinja2==3.1.2
 MarkupSafe==2.1.2
 msgpack==1.0.5
 phonenumbers==8.13.7
+polling==0.3.0
 proto-plus==1.22.2
 protobuf==4.22.1
 pyasn1==0.4.8
