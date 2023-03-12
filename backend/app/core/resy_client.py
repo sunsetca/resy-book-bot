@@ -73,7 +73,7 @@ class ResyClient:
 		)
 
 	def find_venue(self, email, query):
-		self.resy_client_logger.info(f"Attempting to get available reservations: {email}")
+		self.resy_client_logger.info(f"Attempting to search for available restaurants for: {email}")
 		return self.resy_api.find_venue(query)
 
 

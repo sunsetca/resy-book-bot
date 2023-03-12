@@ -38,7 +38,7 @@ class ResyApiWrapper:
 		self.session.headers.update({"x-resy-auth-token": resy_token})
 
 	def find_venue(self, search_request: Dict):
-		self.api_wrapper_logger.info(f"Attempting to get available reservations: {search_request}")
+		self.api_wrapper_logger.info(f"Attempting to get venues with available reservations: {search_request}")
 		find_venues_url = f"{self.base_url}/4/find?" + urlencode(search_request)
 		return self.session.get(url=find_venues_url)
 
