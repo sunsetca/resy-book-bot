@@ -35,7 +35,7 @@ def search():
 def create_resy_task():
 	resy_watch_form = ResyReservationWatchForm()
 	if request.args.get('email') is None:
-		return "please attach email", 403
+		return Response("please attach email", 403)
 	if resy_watch_form.validate_on_submit():
 		res_day = resy_watch_form.res_day.data.strftime('%Y-%m-%d')
 		resy_task = {
