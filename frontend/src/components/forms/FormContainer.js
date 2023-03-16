@@ -13,7 +13,7 @@ import { defaultTheme } from '../../defaultTheme';
 import RegistrationForm from './RegistrationForm';
 import ResyResRequestForm from './ResyResRequestForm';
 import ResyTokenForm from './ResyTokenForm';
-import SignInForm from './SignInForm';
+import Login from './LoginForm';
 
 
 const theme = createTheme(defaultTheme);
@@ -42,7 +42,7 @@ function FormContainer(props){
 }
 
 const WrappedRegistrationForm = () => {
-  return <FormContainer avatar={<AssignmentIndOutlinedIcon/>} typography="Register" form={<RegistrationForm/>}/>
+  return <FormContainer avatar={<AssignmentIndOutlinedIcon/>} typography="Sign up" form={<RegistrationForm/>}/>
 }
 
 const WrappedResyResRequestForm = () => {
@@ -54,7 +54,7 @@ const WrappedResyTokenForm = () => {
 }
 
 const WrappedSignInForm = () => {
-  return <FormContainer avatar={<LockOutlinedIcon/>} typography="Sign In" form={<SignInForm/>}/>
+  return <FormContainer avatar={<LockOutlinedIcon/>} typography="Sign In" form={<Login/>}/>
 }
 
   export {

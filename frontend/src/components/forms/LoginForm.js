@@ -5,7 +5,7 @@ import { HookCheckBox, HookTextField, useHookForm } from 'mui-react-hook-form-pl
 
 import { signInEmailPw } from '../../firebase'
 
-function SignInForm() {
+function Login() {
   const defaultValues = { email: '', password: '', remember: false};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
 
@@ -43,7 +43,7 @@ function SignInForm() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Login
           </Button>
           <Grid container>
             <Grid item xs>
@@ -52,7 +52,7 @@ function SignInForm() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/register" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
@@ -61,4 +61,4 @@ function SignInForm() {
   );
 }
 
-export default SignInForm;
+export default Login;

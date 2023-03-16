@@ -1,29 +1,61 @@
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import './App.css';
-import { WrappedRegistrationForm, WrappedSignInForm } from './components/forms/FormContainer';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://rip-resy.uc.r.appspot.com/">
-        Rip Resy Bot
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import './App.css';
+import ErrorPage from './components/ErrorPage';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate
+} from 'react-router-dom';
+import Root from './routes/root';
+import { 
+  WrappedRegistrationForm, 
+  WrappedSignInForm, 
+  WrappedResyTokenForm, 
+  WrappedResyResRequestForm } from './components/forms/FormContainer';
+import Profile, { loader as profileLoader } from './components/user/Profile';
+import Home from './components/Home';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root/>,
+    errorElement: <ErrorPage/>,
+    children: [
+      {
+        path: "",
+        element: <Home/>
+      },
+      {
+        path: "login/",
+        element: <WrappedSignInForm/>
+      },
+      {
+        path: "register/",
+        element: <WrappedRegistrationForm/>
+      },
+      {
+        path: "user/:userId/",
+        element: <Profile/>,
+        errorElement: <ErrorPage/>,
+        loader: profileLoader
+      },
+      {
+        path: "user/:userId/resy-auth/",
+        element: <WrappedResyTokenForm/>,
+        errorElement: <ErrorPage/>
+      },
+      {
+        path: "user/:userId/resy-res-request/",
+        element: <WrappedResyResRequestForm/>,
+        errorElement: <ErrorPage/>
+      }
+    ],
+  }
+])
 
 function App() {
   return (
-      <div className="RIPRESY">
-        <header className="header"><h1>RIP Resy</h1></header>
-        <WrappedRegistrationForm/>
-        <WrappedSignInForm/>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </div>
+    <RouterProvider router={router}/>
   );
 };
 

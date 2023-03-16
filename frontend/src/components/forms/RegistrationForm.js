@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import { registerEmailPassword } from '../../firebase';
+import { registerEmailPassword, signInWithGoogle } from '../../firebase';
 import { HookTextField, useHookForm } from 'mui-react-hook-form-plus';
 
 const RegistrationForm = () => {
@@ -8,20 +8,14 @@ const RegistrationForm = () => {
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
 
   const onSubmit = (data) => {
-    let email = data.email;
-    let password = data.password;
-    console.log({
-      email: email,
-      password: password,
-    });
+    console.log(data)
     // send response to firebase and process tokens and save in session storage
-    registerEmailPassword(email, password).then(async (user) => {
+    registerEmailPassword(data.email, data.password, data.firstName, data.phoneNumber).then(async (user) => {
       let userFirebaseSession = await user.getIdToken();
       localStorage.setItem('firebaseSession', userFirebaseSession)
     });
     // load user profile
   };
-
   return (
       <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={2}>
@@ -43,7 +37,14 @@ const RegistrationForm = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}>
-              Register
+              Sign up
+            </Button>
+            <Button 
+              onClick={signInWithGoogle}
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}>
+                Sign up with Google
             </Button>
       </form>
   );
