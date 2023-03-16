@@ -1,18 +1,19 @@
 import json
 import logging
-from datetime import timezone
+from datetime import timezone, timedelta
 from typing import Dict
 
 from google.cloud.tasks_v2 import CloudTasksClient, HttpMethod
 from google.protobuf import timestamp_pb2
 
 from app import firestore_client
-from app.core.resy_api_wrapper import ResyApiWrapper
+from .resy_client import ResyClient
 
 
 class TaskHandler:
 	res_req_keys = {'email', 'res_day', 'venue_id'}
-	res_task_keys = {'email', 'party_size', 'res_day', 'res_times', 'table_type', 'venue_id'}
+	res_task_keys = {'email', 'party_size', 'res_day', 'res_times', 'payment_id', 'table_type', 'venue_id'}
+
 	task_builder_logger = logging.getLogger(__name__)
 
 	def __init__(self, project, location, queue):
@@ -33,8 +34,9 @@ class TaskHandler:
 		task['app_engine_http_request']['body'] = json.dumps(resy_task_payload).encode()
 
 		# create and save timestamp for task
+		wakeup = payload['res_live_date'] - timedelta(seconds=10)
 		timestamp = timestamp_pb2.Timestamp()
-		timestamp.FromDatetime(payload['task_live_date'].astimezone(timezone.utc))
+		timestamp.FromDatetime(wakeup.astimezone(timezone.utc))
 		task['schedule_time'] = timestamp
 
 		resp = self.task_client.create_task(parent=self.task_parent, task=task)
@@ -47,8 +49,6 @@ class TaskHandler:
 		self.task_builder_logger.info(f"Saved task request {resy_task_req['task_id']}")
 		return resp
 
-	def execute_task(self, payload: Dict, resy_api: ResyApiWrapper):
-		# poll for venue slot
-		# build a details object
-		# book with details object
-		pass
+	def execute_task(self, payload: Dict, resy_client: ResyClient):
+		self.task_builder_logger.info("Attempting to process task request {venue}".format(venue=payload['venue_id']))
+		return resy_client.book_res(payload)
