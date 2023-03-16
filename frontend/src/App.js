@@ -1,7 +1,7 @@
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import './App.css';
-import { RegistrationForm } from './components/Forms';
+import { WrappedRegistrationForm, WrappedSignInForm } from './components/forms/FormContainer';
 
 function Copyright(props) {
   return (
@@ -18,12 +18,13 @@ function Copyright(props) {
 
 function App() {
   return (
-    <div className="RIPRESY">
-      <header className="RIPRESY-header"><h1>Welcome to RIP Resy</h1></header>
-      <RegistrationForm/>
-      <Copyright sx={{ mt: 8, mb: 4 }} />
-    </div>
+      <div className="RIPRESY">
+        <header className="header"><h1>RIP Resy</h1></header>
+        <WrappedRegistrationForm/>
+        <WrappedSignInForm/>
+        <Copyright sx={{ mt: 8, mb: 4 }} />
+      </div>
   );
-}
+};
 
 export default App;
