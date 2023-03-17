@@ -5,8 +5,10 @@ import { Link, useLoaderData } from 'react-router-dom';
 import getUserProfile from '../../backend';
 
 export async function loader({ params }) {
-    const userData = await getUserProfile(params.userId);
-    return { userData }
+    const userData = await getUserProfile({
+        userId: params.userId
+    });
+    return userData
 }
 
 const Profile = () => {

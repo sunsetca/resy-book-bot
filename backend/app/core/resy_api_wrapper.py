@@ -57,6 +57,6 @@ class ResyApiWrapper:
 		resp = self.session.post(f"{self.base_url}/3/book", data=query_params)
 		return resp
 
-	def get_res_list(self, user_id):
-		self.api_wrapper_logger.info(f"Attempting to check reservation for {user_id}")
+	def get_res_list(self, email):
+		self.api_wrapper_logger.info(f"Attempting to check reservation for {email}")
 		return self.session.get(f"{self.base_url}/3/user/reservations")

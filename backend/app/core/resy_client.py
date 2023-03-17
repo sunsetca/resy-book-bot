@@ -35,7 +35,7 @@ class ResyClient:
 			book_token = details_resp['book_token']['value']
 			payment_id = details_resp['user']['payment_methods'][0]['id']
 			booking_resp = self.resy_api.create_reservation(payment_id, book_token).json()
-			res_list = self.resy_api.get_res_list(payload['email']).json()
+			res_list = self.get_res_list(payload['email'])
 			confirmed_reservation = any(
 				booking_resp['reservation_id'] == res['reservation_id'] for res in res_list['reservations'])
 
@@ -77,6 +77,12 @@ class ResyClient:
 		self.resy_client_logger.info(f"Attempting to search for available restaurants for: {email}")
 		return self.resy_api.find_venue(query)
 
+	def get_res_list(self, email):
+		return self.resy_api.get_res_list(email).json()
+	
+	def set_token(self, token):
+		self.resy_api.set_resy_token(token)
+		return
 
 def build_priority_list(venue_slots: SortedList, res_times: List[str]) -> List[Tuple]:
 	priority_list = []

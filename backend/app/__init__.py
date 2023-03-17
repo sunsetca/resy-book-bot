@@ -2,6 +2,7 @@ import firebase_admin
 import google.auth
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
 from google.cloud.firestore import Client as FirestoreClient
 
@@ -36,6 +37,7 @@ def create_app() -> Flask:
 		app.config.from_object(f"app.config.{active_env}")
 
 	csrf.init_app(app)
+	CORS(app)
 
 	try:
 		os.makedirs(app.instance_path)

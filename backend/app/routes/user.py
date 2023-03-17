@@ -2,7 +2,7 @@ import json
 
 from flask import Blueprint, Response, request
 
-from app import account_handler
+from app import account_handler, resy_client
 from app.forms.resy_form import ResyTokenForm
 from app.forms.user_account_forms import RegistrationForm
 
@@ -43,3 +43,16 @@ def delete_resy_token():
 	user_id = account_handler.get_user_id(email)
 	account_handler.remove_resy_token(user_id)
 	return Response(status=200)
+
+
+@user_bp.route('/user_profile', methods=['GET'])
+def get_user_profile():
+	user_id = request.args.get('userId')
+	resy_token = account_handler.get_resy_token(user_id)
+	email = account_handler.get_user_account(user_id).email
+	if resy_token:
+		resy_client.set_token(resy_token)
+		res_list = resy_client.get_res_list(email)
+		return Response(response=json.dumps(res_list), status=200)
+	else:
+		return Response("Unable to find an active resy token", status=400)
