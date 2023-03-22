@@ -6,43 +6,50 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import { createTheme } from '@mui/material/styles';
-import { defaultTheme } from '../../defaultTheme';
+
 import RegistrationForm from './RegistrationForm';
 import ResyResRequestForm from './ResyResRequestForm';
 import ResyTokenForm from './ResyTokenForm';
-import Login from './LoginForm';
+import Login, { LoginWithOtherProviders } from './LoginForm';
+import { Divider } from '@mui/material';
 
 
-const theme = createTheme(defaultTheme);
 
 function FormContainer(props){
+  let activeDivider;
+
+  if (props.leftChild) {
+    activeDivider = <Divider flexItem={true}>OR</Divider>
+  }
+
   return(
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
       <Box
           sx={{
-          marginTop: 8,
+          marginTop: 5,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           }}>
-        <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
-          {props.avatar}
-        </Avatar>
-        <Typography component="h1" variant="h5">
-            {props.typography}
-        </Typography>
-        {props.form}
+          <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+            {props.avatar}
+          </Avatar>
+          <Typography component="h1" variant="h5">
+              {props.typography}
+          </Typography>
+          {props.leftChild}
+          {activeDivider}
+          {props.form}
+          
       </Box>
+
     </Container>
   );
 }
 
 const WrappedRegistrationForm = () => {
-  return <FormContainer avatar={<AssignmentIndOutlinedIcon/>} typography="Sign up" form={<RegistrationForm/>}/>
+  return <FormContainer avatar={<AssignmentIndOutlinedIcon/>} form={<RegistrationForm/>} leftChild={<LoginWithOtherProviders action="Sign up"/>}/>
 }
 
 const WrappedResyResRequestForm = () => {
@@ -54,7 +61,7 @@ const WrappedResyTokenForm = () => {
 }
 
 const WrappedSignInForm = () => {
-  return <FormContainer avatar={<LockOutlinedIcon/>} typography="Sign In" form={<Login/>}/>
+  return <FormContainer avatar={<LockOutlinedIcon/>} form={<Login/>} leftChild={<LoginWithOtherProviders action="Login"/>}/>
 }
 
   export {

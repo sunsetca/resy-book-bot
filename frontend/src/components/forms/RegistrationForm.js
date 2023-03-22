@@ -39,13 +39,6 @@ const RegistrationForm = () => {
               sx={{ mt: 3, mb: 2 }}>
               Sign up
             </Button>
-            <Button 
-              onClick={signInWithGoogle}
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}>
-                Sign up with Google
-            </Button>
       </form>
   );
 };

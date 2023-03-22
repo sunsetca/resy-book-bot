@@ -1,9 +1,32 @@
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import { HookCheckBox, HookTextField, useHookForm } from 'mui-react-hook-form-plus';
+import { 
+  Button, 
+  Divider, 
+  Grid, 
+  Link, 
+  Typography} from '@mui/material';
+import { 
+  HookCheckBox, 
+  HookTextField, 
+  useHookForm } from 'mui-react-hook-form-plus';
 
-import { signInEmailPw } from '../../firebase'
+import { 
+  processSignInWithGoogle,
+  signInEmailPw, 
+  signInWithGoogle, 
+   } from '../../firebase';
+import GoogleLogo from '../../img/google_logo.png';
+
+const LoginWithOtherProviders = (props) => {
+  const thirdPartySignIn = () => {
+    signInWithGoogle();
+    processSignInWithGoogle();
+  }
+  return (
+      <Button onClick={thirdPartySignIn} fullWidth variant="contained" sx={{mt: 3, mb: 2}} startIcon={<img src={GoogleLogo} alt="Google Logo" width={25} height={25}/>}>
+        {props.action} with Google
+      </Button>
+  )
+};
 
 function Login() {
   const defaultValues = { email: '', password: '', remember: false};
@@ -25,40 +48,45 @@ function Login() {
     });
   };
 
+
+
+  // TODO: Add CSS to create a div
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-        
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <HookTextField {...registerState('email')} textFieldProps={{autoComplete: "email", autoFocus: true, margin: "normal", fullWidth: true, label: "Email"}}/>
-            </Grid>
-            <Grid item xs={12}>
-                <HookTextField {...registerState('password')} textFieldProps={{autoComplete: "new-password", autoFocus: true, margin: "normal", fullWidth: true, label: "Password", type: "password"}}/>
-            </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+              <HookTextField {...registerState('email')} textFieldProps={{autoComplete: "email", autoFocus: true, margin: "normal", fullWidth: true, label: "Email"}}/>
           </Grid>
-          <HookCheckBox {...registerState('remember')} formControlLabelProps={{label: "Remember me"}}/>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Login
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="/register" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
+          <Grid item xs={12}>
+              <HookTextField {...registerState('password')} textFieldProps={{autoComplete: "new-password", autoFocus: true, margin: "normal", fullWidth: true, label: "Password", type: "password"}}/>
           </Grid>
-      </form>
+        </Grid>
+        <HookCheckBox {...registerState('remember')} formControlLabelProps={{label: "Remember me"}}/>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          Login
+        </Button>
+        <Grid container>
+          <Grid item xs>
+            <Link href="#" variant="body2">
+              Forgot password?
+            </Link>
+          </Grid>
+          <Grid item>
+            <Link href="/register" variant="body2">
+              {"Don't have an account? Register"}
+            </Link>
+          </Grid>
+        </Grid>
+    </form>
   );
 }
 
 export default Login;
+export {
+  LoginWithOtherProviders
+}

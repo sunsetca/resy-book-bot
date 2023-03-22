@@ -1,10 +1,8 @@
 
-import './App.css';
 import ErrorPage from './components/ErrorPage';
 import {
   createBrowserRouter,
-  RouterProvider,
-  Navigate
+  RouterProvider
 } from 'react-router-dom';
 import Root from './routes/root';
 import { 
@@ -14,6 +12,10 @@ import {
   WrappedResyResRequestForm } from './components/forms/FormContainer';
 import Profile, { loader as profileLoader } from './components/user/Profile';
 import Home from './components/Home';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { defaultTheme } from './defaultTheme';
+
+const theme = createTheme(defaultTheme);
 
 const router = createBrowserRouter([
   {
@@ -55,7 +57,9 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <RouterProvider router={router}/>
+    <ThemeProvider theme={theme}>
+      <RouterProvider router={router}/>
+    </ThemeProvider>
   );
 };
 
