@@ -1,5 +1,6 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { doc, getDoc, getFirestore, collection } from "firebase/firestore";
+
 import { 
     getAuth, 
     getRedirectResult, 
@@ -10,7 +11,8 @@ import {
     signOut, 
     updateProfile,
     GoogleAuthProvider, 
-    onAuthStateChanged
+    onAuthStateChanged,
+    sendPasswordResetEmail
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -27,6 +29,8 @@ const provider = new GoogleAuthProvider();
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const firestore = getFirestore(app);
+
 const registerEmailPassword = async (email, password, displayName, phoneNumber) => {
     console.log(firebaseConfig);
     try {
@@ -53,6 +57,7 @@ const signInWithGoogle = async () => {
     provider.addScope("https://www.googleapis.com/auth/user.phonenumbers.read");
     return await signInWithRedirect(auth, provider);
 }
+
 const processSignInWithGoogle = async () => {
     await getRedirectResult(auth)
         .then(async (result) => {
@@ -87,10 +92,30 @@ const logout = () => {
     });
 }
 
+const resetPassword = (email) => {
+    sendPasswordResetEmail(auth, email).then(() => {}).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+    });
+}
+
+const getResyToken = async (firebaseUID) => {
+    const docRef = doc(firestore, "resy_tokens", firebaseUID);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()){
+        return docSnap.data();
+    } else {
+        return null;
+    }
+}
+
 export {
     auth,
+    getResyToken,
     isLoggedIn,
     registerEmailPassword,
+    resetPassword,
     signInEmailPw,
     signInWithGoogle,
     processSignInWithGoogle,

@@ -22,8 +22,29 @@ async function requestReservationTask(formData) {
     return response;
 }
 
+async function searchVenue(params) {
+    console.log(params);
+    let request_url = `/resy/search` + (new URLSearchParams({email: params.email}).toString());
+    let searchDate = new Date(Date.now());
+    searchDate.setDate(searchDate.getDate() + 1);
+    
+    let payload = {
+        "lat": params.lat,
+        "long": params.lng,
+        "day": searchDate.toDateString(),
+        "party_size": 2
+    };
+    // let response = await axios.post(request_url, payload);
+    // return response;
+}
+
+async function getUserResyToken(firebaseUID) {
+
+}
+
 export {
     authorizeResyToken,
     getUserProfile,
-    requestReservationTask
+    requestReservationTask,
+    searchVenue
 }

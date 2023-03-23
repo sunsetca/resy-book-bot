@@ -7,7 +7,7 @@ import {
   HookTextField, 
   useHookForm } from 'mui-react-hook-form-plus';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveRememberChoice } from '../../redux/slices';
+import { saveRememberChoice } from '../../redux/authSlice';
 
 import {
   signInEmailPw, 
@@ -39,6 +39,7 @@ function Login() {
   const defaultValues = { email: '', password: '', remember: false};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
   const dispatch = useDispatch();
+
 
   if (user) {
     return <Navigate to={`/user/${firebaseUID}`}/>
@@ -75,7 +76,7 @@ function Login() {
         </Button>
         <Grid container>
           <Grid item xs>
-            <Link href="#" variant="body2">
+            <Link href="/password-reset" variant="body2">
               Forgot password?
             </Link>
           </Grid>

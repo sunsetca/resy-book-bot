@@ -3,6 +3,9 @@ import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined
 import LaptopChromebookOutlinedIcon from '@mui/icons-material/LaptopChromebookOutlined';
 import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import LockResetIcon from '@mui/icons-material/LockReset';
+import LocationSearchingIcon from '@mui/icons-material/LocationSearching';
+import { Divider } from '@mui/material';
 
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -11,16 +14,21 @@ import Typography from '@mui/material/Typography';
 import RegistrationForm from './RegistrationForm';
 import ResyResRequestForm from './ResyResRequestForm';
 import ResyTokenForm from './ResyTokenForm';
+import PasswordResetForm from './PasswordResetForm';
+import VenueRequestForm from './VenueSearchForm';
 import Login, { LoginWithOtherProviders } from './LoginForm';
-import { Divider } from '@mui/material';
-
+import AuthTokenHowTo from '../AuthTokenHowTo';
 
 
 function FormContainer(props){
   let activeDivider;
 
   if (props.leftChild) {
-    activeDivider = <Divider flexItem={true}>OR</Divider>
+    if (props.callToAction) {
+      activeDivider = <Divider flexItem={true} sx={{marginTop: 2}}>{props.callToAction}</Divider> 
+    } else {
+      activeDivider = <Divider flexItem={true} sx={{marginTop: 2}}/>
+    }
   }
 
   return(
@@ -35,7 +43,7 @@ function FormContainer(props){
           <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
             {props.avatar}
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" sx={{marginBottom: 3}}>
               {props.typography}
           </Typography>
           {props.leftChild}
@@ -49,7 +57,7 @@ function FormContainer(props){
 }
 
 const WrappedRegistrationForm = () => {
-  return <FormContainer avatar={<AssignmentIndOutlinedIcon/>} form={<RegistrationForm/>} leftChild={<LoginWithOtherProviders action="Sign up"/>}/>
+  return <FormContainer avatar={<AssignmentIndOutlinedIcon/>} form={<RegistrationForm/>} leftChild={<LoginWithOtherProviders action="Sign up"/>} callToAction="OR"/>
 }
 
 const WrappedResyResRequestForm = () => {
@@ -57,16 +65,26 @@ const WrappedResyResRequestForm = () => {
 }
 
 const WrappedResyTokenForm = () => {
-  return <FormContainer avatar={<KeyOutlinedIcon/>} typography="Register Resy Auth Token" form={<ResyTokenForm/>}/>
+  return <FormContainer avatar={<KeyOutlinedIcon/>} typography="Register Resy Auth Token" form={<ResyTokenForm/>} leftChild={<AuthTokenHowTo/>}/>
 }
 
 const WrappedSignInForm = () => {
-  return <FormContainer avatar={<LockOutlinedIcon/>} form={<Login/>} leftChild={<LoginWithOtherProviders action="Login"/>}/>
+  return <FormContainer avatar={<LockOutlinedIcon/>} form={<Login/>} leftChild={<LoginWithOtherProviders action="Login"/>} callToAction="OR"/>
 }
 
-  export {
+const WrappedPasswordResetForm = () => {
+  return <FormContainer avatar={<LockResetIcon/>} typography="Reset password" form={<PasswordResetForm/>}/>
+}
+
+const WrappedVenueSearchForm = () => {
+  return <FormContainer avatar={<LocationSearchingIcon/>} typography="Find venue" form={<VenueRequestForm/>}/>
+}
+
+export {
   WrappedRegistrationForm,
   WrappedResyResRequestForm,
   WrappedResyTokenForm,
-  WrappedSignInForm
+  WrappedSignInForm,
+  WrappedPasswordResetForm,
+  WrappedVenueSearchForm
 }

@@ -1,19 +1,26 @@
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { HookTextField, useHookForm } from 'mui-react-hook-form-plus';
+import { Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { authorizeResyToken } from '../../backend';
+import { useNavigate } from "react-router-dom";
 
 function ResyTokenForm(){
   const defaultValues = { email: ''};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
+  const {user, firebaseUID} = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  if (!user) {
+    navigate('/');
+  }
 
   const onSubmit = (data) => {
-    let email = data.email;
-    let token = data.resy_token;
-    console.log({
-      email: email,
-      token: token
-    });
+    authorizeResyToken(data);
+    navigate(`/user/${firebaseUID}`);
   }
+
   return( 
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={2}>

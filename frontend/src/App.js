@@ -9,7 +9,10 @@ import {
   WrappedRegistrationForm, 
   WrappedSignInForm, 
   WrappedResyTokenForm, 
-  WrappedResyResRequestForm } from './components/forms/FormContainer';
+  WrappedResyResRequestForm,
+  WrappedPasswordResetForm, 
+  WrappedVenueSearchForm} from './components/forms/FormContainer';
+import VenueRequestForm from './components/forms/VenueSearchForm';
 import Profile, { loader as profileLoader } from './components/user/Profile';
 import Home from './components/Home';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -17,7 +20,7 @@ import { defaultTheme } from './defaultTheme';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { auth } from './firebase';
-import { saveFirebaseUID, saveUser } from './redux/slices';
+import { saveFirebaseUID, saveUser } from './redux/authSlice';
 import { onAuthStateChanged } from 'firebase/auth';
 
 
@@ -38,6 +41,10 @@ const router = createBrowserRouter([
         element: <WrappedSignInForm/>
       },
       {
+        path: "password-reset/",
+        element: <WrappedPasswordResetForm/>
+      },
+      {
         path: "register/",
         element: <WrappedRegistrationForm/>
       },
@@ -56,7 +63,11 @@ const router = createBrowserRouter([
         path: "user/:userId/resy-res-request/",
         element: <WrappedResyResRequestForm/>,
         errorElement: <ErrorPage/>
-      }
+      },
+      {
+        path: "user/venue-search",
+        element: <WrappedVenueSearchForm/>
+      },
     ],
   }
 ])

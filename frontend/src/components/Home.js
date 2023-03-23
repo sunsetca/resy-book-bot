@@ -2,6 +2,9 @@ import { Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Home = () => {
     return (
@@ -14,7 +17,7 @@ const Home = () => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     }}>
-                <Typography variant="body2" color="text.secondary">Currently in private mode, please sign in or register for access</Typography>
+                <Typography variant="body2" color="text.secondary">Currently in private mode, please login or register for access</Typography>
                 <Button>
                     <Link to={`login/`}>Login</Link>
                 </Button>

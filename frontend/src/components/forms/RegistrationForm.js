@@ -3,21 +3,22 @@ import Grid from '@mui/material/Grid';
 import { registerEmailPassword } from '../../firebase';
 import { HookTextField, useHookForm } from 'mui-react-hook-form-plus';
 import { useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const RegistrationForm = () => {
   const {user, firebaseUID} = useSelector((state) => state.auth);
   const defaultValues = { email: '', password: '', firstName: '', phoneNumber: ''};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
+  const navigate = useNavigate();
 
   if (user) {
-    return <Navigate to={`/user/${firebaseUID}`}/>
+    navigate(`/user/${firebaseUID}`);
   }
 
   const onSubmit = (data) => {
     // send response to firebase and process tokens and save in session storage
     registerEmailPassword(data.email, data.password, data.firstName, data.phoneNumber);
-    return <Navigate to={`/user/${firebaseUID}`}/>
+    navigate(`/user/${firebaseUID}`);
   };
 
   return (

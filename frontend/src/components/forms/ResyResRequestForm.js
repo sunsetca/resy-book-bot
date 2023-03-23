@@ -1,10 +1,12 @@
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { HookTextField, useHookForm } from 'mui-react-hook-form-plus';
+import { useSelector } from 'react-redux';
 
 function ResyResRequestForm(){
   const defaultValues = { email: ''};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
+  const {long, lat} = useSelector((state) => state.venue);
 
   const onSubmit = (data) => {
     let email = data.email;

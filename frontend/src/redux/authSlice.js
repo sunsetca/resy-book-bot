@@ -4,6 +4,7 @@ const initialState = {
     loading: false,
     user: null,
     firebaseUID: null,
+    resyToken: null,
     rememberMe: false,
     error: null
 };
@@ -18,11 +19,16 @@ const authSlice = createSlice({
         saveFirebaseUID(state, action) {
             state.firebaseUID = action.payload;
         },
-        saveRememberChoice(state, action){
+        saveRememberChoice(state, action) {
             state.rememberMe = action.payload;
+        },
+        saveResyToken(state, action) {
+            state.resyToken = action.payload;
         }
     }
 });
 
-export const { saveUser, saveFirebaseUID, saveRememberChoice } = authSlice.actions;
+
+
+export const { saveUser, saveFirebaseUID, saveRememberChoice, saveResyToken } = authSlice.actions;
 export default authSlice.reducer;
