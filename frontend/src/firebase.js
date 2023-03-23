@@ -43,8 +43,7 @@ const signInEmailPw = async (email, password) => {
     try {
         const userCreds = await signInWithEmailAndPassword(auth, email, password);
         let userFirebaseSession = await userCreds.user.getIdToken();
-        localStorage.setItem('firebaseSession', userFirebaseSession)
-        return userCreds.user;
+        return {user: userCreds.user, firebaseToken: userFirebaseSession}
     } catch (error) {
         console.log(`${error.code}:${error.message}`);
     }
@@ -52,32 +51,31 @@ const signInEmailPw = async (email, password) => {
 
 const signInWithGoogle = async () => {
     provider.addScope("https://www.googleapis.com/auth/user.phonenumbers.read");
-    await signInWithRedirect(auth, provider);
+    return await signInWithRedirect(auth, provider);
 }
 const processSignInWithGoogle = async () => {
     await getRedirectResult(auth)
         .then(async (result) => {
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const user = result.user;
-            console.log(user);
-            let userfbtoken = await user.getIdToken();
-            console.log(userfbtoken);
+            let userFirebaseSession = await user.getIdToken();
+            return {user: user, firebaseToken: userFirebaseSession}
         }).catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             const email = error.customData.email;
             const credential = GoogleAuthProvider.credentialFromError(error);
+            console.error(`${errorCode}: ${errorMessage}: ${email}: ${credential}`);
   });
 }
 
 const isLoggedIn = async () => {
     return await onAuthStateChanged(auth, async (user) => {
         if (user) {
-            let userToken = await user.getIdToken();
-            localStorage.setItem('firebaseSession', userToken);
-            return true;
+            let userFirebaseSession = await user.getIdToken();
+            return {user: user, firebaseToken: userFirebaseSession};
         } else {
-            return false;
+            return {user: null, firebaseToken: null};
         }
     })
 }

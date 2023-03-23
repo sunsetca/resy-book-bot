@@ -1,26 +1,32 @@
 import { 
-  Button, 
-  Divider, 
+  Button,
   Grid, 
-  Link, 
-  Typography} from '@mui/material';
+  Link} from '@mui/material';
 import { 
   HookCheckBox, 
   HookTextField, 
   useHookForm } from 'mui-react-hook-form-plus';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveRememberChoice } from '../../redux/slices';
 
-import { 
-  processSignInWithGoogle,
+import {
   signInEmailPw, 
   signInWithGoogle, 
    } from '../../firebase';
 import GoogleLogo from '../../img/google_logo.png';
+import { Navigate } from 'react-router-dom';
 
 const LoginWithOtherProviders = (props) => {
+  const {user, firebaseUID} = useSelector((state) => state.auth);
+
+  if (user) {
+    return <Navigate to={`/user/${firebaseUID}`}/>
+  }
+
   const thirdPartySignIn = () => {
     signInWithGoogle();
-    processSignInWithGoogle();
   }
+
   return (
       <Button onClick={thirdPartySignIn} fullWidth variant="contained" sx={{mt: 3, mb: 2}} startIcon={<img src={GoogleLogo} alt="Google Logo" width={25} height={25}/>}>
         {props.action} with Google
@@ -29,28 +35,25 @@ const LoginWithOtherProviders = (props) => {
 };
 
 function Login() {
+  const {user, firebaseUID} = useSelector((state) => state.auth);
   const defaultValues = { email: '', password: '', remember: false};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
+  const dispatch = useDispatch();
+
+  if (user) {
+    return <Navigate to={`/user/${firebaseUID}`}/>
+  }
+
 
   const onSubmit = (data) => {
     let email = data.email;
     let password = data.password;
     let remember = data.remember;
-    console.log({
-      email: email,
-      password: password,
-      remember: remember
-    });
-    // send response to firebase and process tokens and save in session storage
-    signInEmailPw(email, password).then(async (user) => {
-      let userFirebaseSession = await user.getIdToken();
-      localStorage.setItem('firebaseSession', userFirebaseSession)
-    });
+    signInEmailPw(email, password);
+    dispatch(saveRememberChoice(remember));
   };
 
-
-
-  // TODO: Add CSS to create a div
+  
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>

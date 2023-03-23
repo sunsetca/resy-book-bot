@@ -53,3 +53,6 @@ class AccountHandler:
 			token = resy_token.to_dict()
 			return token["_token"]
 		return None
+
+	def valid_resy_token(self, user_id):
+		return True if self.get_resy_token(user_id) else False

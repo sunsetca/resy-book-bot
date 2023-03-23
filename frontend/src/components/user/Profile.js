@@ -8,17 +8,23 @@ export async function loader({ params }) {
     const userData = await getUserProfile({
         userId: params.userId
     });
-    return userData
+    return userData;
 }
 
 const Profile = () => {
-    const { userData } = useLoaderData();
+    const userData  = useLoaderData();
+    let resyAction;
+
+    if (userData && userData.activeToken){
+        resyAction = <Button><Link to={`resy-res-request`}>Create Reservation Task Request</Link></Button>;
+    } else {
+        resyAction = <Button><Link to={`resy-auth`}>Register Resy Auth</Link></Button>;
+    }
+
     return (
         <Container component="main" maxWidth="s">
             <Typography component="h1" variant="h5">Your Profile</Typography>
-            <Button>
-                <Link to={`user/${userData.userId}/register-resy-auth`}>Register Resy Auth</Link>
-            </Button>
+            {resyAction}
         </Container>
     );
 };
