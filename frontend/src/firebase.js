@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { doc, getDoc, getFirestore, collection } from "firebase/firestore";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 
 import { 
     getAuth, 
@@ -85,15 +85,15 @@ const isLoggedIn = async () => {
     })
 }
 
-const logout = () => {
-    signOut(auth).then(() => {}).catch((error) => {
+const logout = async () => {
+    await signOut(auth).then(() => {}).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
     });
 }
 
-const resetPassword = (email) => {
-    sendPasswordResetEmail(auth, email).then(() => {}).catch((error) => {
+const resetPassword = async (email) => {
+    await sendPasswordResetEmail(auth, email).then(() => {}).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
     });

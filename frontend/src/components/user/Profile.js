@@ -5,9 +5,9 @@ import { Link, useLoaderData } from 'react-router-dom';
 import {getUserProfile} from '../../backend';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-export async function loader({ params }) {
+async function loader({ params }) {
     const userData = await getUserProfile({
         userId: params.userId
     });
@@ -15,17 +15,34 @@ export async function loader({ params }) {
 }
 
 const Profile = () => {
-    const userData  = useLoaderData();
-    const {user} = useSelector((state) => state.auth);
+    const [loading, setLoading] = useState(true);
+    const [userData, setUserData] = useState(null);
+    const [fetched, setFetched] = useState(false);
+    const {user, firebaseUID} = useSelector((state) => state.auth);
     const navigate = useNavigate();
     let resyAction;
 
     useEffect(() => {
         if (!user) {
-            navigate(`/`);
+            navigate('/login');
         }
-    }, [user, navigate]);
+    });
+
+    useEffect(() => {
+        console.log("Profile useEffect is called");
+        if (user && !fetched) {
+            (async () => {
+                const fetchedUserData = await loader({ params: { userId: firebaseUID } });
+                setUserData(fetchedUserData);
+                setLoading(false);
+                setFetched(true);
+            })();
+        }
+    }, [user, firebaseUID, fetched]);
     
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     if (userData && userData.activeToken){
         resyAction = <Button><Link to={`resy-res-request`}>Create Reservation Task Request</Link></Button>;
@@ -40,5 +57,6 @@ const Profile = () => {
         </Container>
     );
 };
+Profile.loader = loader;
 
 export default Profile;

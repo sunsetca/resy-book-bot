@@ -3,9 +3,19 @@ import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { logout } from '../firebase';
+import { useDispatch } from 'react-redux';
+import { saveUser, saveFirebaseUID, saveResyToken } from '../redux/authSlice';
 
 const Navbar = () => {
   const {user} = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  
+  const logoutCurrentUser = async () => {
+    await logout();
+    dispatch(saveUser(null));
+    dispatch(saveFirebaseUID(null));
+    dispatch(saveResyToken(null));
+  }
 
   return (
     <AppBar position="static">
@@ -17,7 +27,7 @@ const Navbar = () => {
         { user ? "" : <Button color="inherit" component={NavLink} to="/register" exact="true">Register</Button> }
         { user 
           ? 
-            <Button color="inherit" onClick={logout} exact="true">Logout</Button>
+            <Button color="inherit" onClick={logoutCurrentUser} exact="true">Logout</Button>
           : 
             <Button color="inherit" component={NavLink} to="/login" exact="true">Login</Button>
         }

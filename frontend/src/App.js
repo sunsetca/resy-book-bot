@@ -12,8 +12,7 @@ import {
   WrappedResyResRequestForm,
   WrappedPasswordResetForm, 
   WrappedVenueSearchForm} from './components/forms/FormContainer';
-import VenueRequestForm from './components/forms/VenueSearchForm';
-import Profile, { loader as profileLoader } from './components/user/Profile';
+import Profile from './components/user/Profile';
 import Home from './components/Home';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { defaultTheme } from './defaultTheme';
@@ -21,7 +20,6 @@ import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { auth } from './firebase';
 import { saveFirebaseUID, saveUser } from './redux/authSlice';
-import { onAuthStateChanged } from 'firebase/auth';
 
 
 const theme = createTheme(defaultTheme);
@@ -52,7 +50,7 @@ const router = createBrowserRouter([
         path: "user/:userId/",
         element: <Profile/>,
         errorElement: <ErrorPage/>,
-        loader: profileLoader
+        loader: Profile.loader
       },
       {
         path: "user/:userId/resy-auth/",
@@ -74,10 +72,9 @@ const router = createBrowserRouter([
 
 function App() {
   const dispatch = useDispatch();
-  const firebaseAuth = auth;
   
   useEffect(() => {
-    onAuthStateChanged(firebaseAuth, (user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         const {displayName, email, uid} = user;
         dispatch(saveUser({displayName, email}));
@@ -87,7 +84,8 @@ function App() {
         dispatch(saveFirebaseUID(null));
       }
     });
-  }, [firebaseAuth, dispatch]);
+    return unsubscribe;
+  }, [dispatch]);
 
   return (
     <ThemeProvider theme={theme}>

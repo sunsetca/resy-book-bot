@@ -34,8 +34,8 @@ async function searchVenue(params) {
         "day": searchDate.toDateString(),
         "party_size": 2
     };
-    // let response = await axios.post(request_url, payload);
-    // return response;
+    let response = await axios.post(request_url, payload);
+    return response;
 }
 
 async function getUserResyToken(firebaseUID) {

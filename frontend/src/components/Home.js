@@ -7,6 +7,15 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 const Home = () => {
+    const {user, firebaseUID} = useSelector((state) => state.auth);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            navigate(`/user/${firebaseUID}`);
+        }
+    }, [user, firebaseUID, navigate]);
+    
     return (
         <Container component="main" maxWidth="xs">
             <Box

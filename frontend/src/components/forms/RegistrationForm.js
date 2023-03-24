@@ -4,6 +4,7 @@ import { registerEmailPassword } from '../../firebase';
 import { HookTextField, useHookForm } from 'mui-react-hook-form-plus';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
 
 const RegistrationForm = () => {
   const {user, firebaseUID} = useSelector((state) => state.auth);
@@ -11,13 +12,15 @@ const RegistrationForm = () => {
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
   const navigate = useNavigate();
 
-  if (user) {
-    navigate(`/user/${firebaseUID}`);
-  }
+  useEffect(() => {
+    if (user) {
+      navigate(`/user/${firebaseUID}`);
+    }
+  }, [user, firebaseUID]);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     // send response to firebase and process tokens and save in session storage
-    registerEmailPassword(data.email, data.password, data.firstName, data.phoneNumber);
+    await registerEmailPassword(data.email, data.password, data.firstName, data.phoneNumber);
     navigate(`/user/${firebaseUID}`);
   };
 

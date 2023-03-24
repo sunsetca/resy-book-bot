@@ -4,16 +4,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
 export default function AuthTokenHowTo() {
-    const {user} = useSelector((state) => state.auth);
-
-    if (!user) {
-      return <Navigate to={`/`}/>
-    }
-
     return (
         <>
             <Accordion>

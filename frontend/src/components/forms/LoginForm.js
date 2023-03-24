@@ -14,17 +14,21 @@ import {
   signInWithGoogle, 
    } from '../../firebase';
 import GoogleLogo from '../../img/google_logo.png';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const LoginWithOtherProviders = (props) => {
   const {user, firebaseUID} = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
-  if (user) {
-    return <Navigate to={`/user/${firebaseUID}`}/>
-  }
+  useEffect(() => {
+    if (user) {
+      navigate(`/user/${firebaseUID}`);
+    }
+  }, [user, firebaseUID]);
 
-  const thirdPartySignIn = () => {
-    signInWithGoogle();
+  const thirdPartySignIn = async () => {
+    await signInWithGoogle();
   }
 
   return (
@@ -39,18 +43,20 @@ function Login() {
   const defaultValues = { email: '', password: '', remember: false};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate(`/user/${firebaseUID}`);
+    }
+  }, [user, firebaseUID, navigate]);
 
 
-  if (user) {
-    return <Navigate to={`/user/${firebaseUID}`}/>
-  }
-
-
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     let email = data.email;
     let password = data.password;
     let remember = data.remember;
-    signInEmailPw(email, password);
+    await signInEmailPw(email, password);
     dispatch(saveRememberChoice(remember));
   };
 

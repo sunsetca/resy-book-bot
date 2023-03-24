@@ -1,6 +1,5 @@
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 

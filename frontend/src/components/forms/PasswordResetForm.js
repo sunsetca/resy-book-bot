@@ -1,16 +1,17 @@
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { HookTextField, useHookForm } from 'mui-react-hook-form-plus';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { resetPassword } from '../../firebase';
 
 function ResetPassword() {
     const defaultValues = { email: ''};
     const { registerState, handleSubmit } = useHookForm({ defaultValues, });
+    const navigate = useNavigate();
 
-    const onSubmit = (data) => {
-        resetPassword(data.email);
-        return <Navigate to={'/'}/>
+    const onSubmit = async (data) => {
+        await resetPassword(data.email);
+        navigate(`/`);
     }
 
     return (

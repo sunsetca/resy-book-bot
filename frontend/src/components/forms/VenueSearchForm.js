@@ -32,10 +32,10 @@ const VenueRequestForm = () => {
 
     }
     
-    const onSubmit = (data) => {
+    const onClick = async () => {
         console.log(`curr long lat ${lng}:${lat}`);
-        let resyToken = getResyToken(firebaseUID)._token;
-        let resp = searchVenue({lng: lng, lat: lat, email: user.email, resyToken: resyToken});
+        let resyToken = await getResyToken(firebaseUID)._token;
+        let resp = await searchVenue({lng: lng, lat: lat, email: user.email, resyToken: resyToken});
         console.log(resp);
         setOpen(true);
     }
@@ -57,7 +57,7 @@ const VenueRequestForm = () => {
                 </Grid>
             </Grid>
             <Button
-            onClick={onSubmit}
+            onClick={onClick}
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}>
