@@ -19,7 +19,6 @@ const RegistrationForm = () => {
   }, [user, firebaseUID]);
 
   const onSubmit = async (data) => {
-    // send response to firebase and process tokens and save in session storage
     await registerEmailPassword(data.email, data.password, data.firstName, data.phoneNumber);
     navigate(`/user/${firebaseUID}`);
   };

@@ -7,46 +7,92 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import { useDispatch, useSelector } from 'react-redux';
-import { saveLatLong } from '../redux/venueSlice';
-import { useNavigate } from "react-router-dom";
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import { useDispatch } from 'react-redux';
+import { saveLatLong, saveVenue, saveVenueId } from '../redux/venueSlice';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
 function VenueSelectionDialog(props){
-    const { firebaseUID } = useSelector((state) => state.auth)
+    const [selected, setSelected] = useState(null);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const handleClose = () => {
       props.setOpen(false);
     };
     const handleNo = () => {
-        dispatch(saveLatLong({lat: null, lng: null}));
-        props.setOpen(false);
+        props.setMapSearchClear(false);
+        props.setSearch(true);
     };
     const handleYes = () => {
-      navigate(`user/${firebaseUID}/resy-res-request/`);
+      props.parentModalClose(false);
+      props.setOpen(false);
     };
 
+    const handleSelection = () => {
+      dispatch(saveLatLong({lat: selected.lat, lon: selected.lon}));
+      dispatch(saveVenue(selected.name));
+      dispatch(saveVenueId(selected.id));
+      console.log(selected);
+      props.setSearch(false);
+      props.setOpen(false);
+      props.parentModalClose(false);
+
+    }
+
     return (
-      <Dialog 
+      <Dialog
         open={props.isOpen}
         TransitionComponent={Transition}
         keepMounted
         onClose={handleClose}
-        aria-describedby="alert-dialog-slide-description">
-          <DialogTitle>Is this the correct venue?</DialogTitle>
+        aria-describedby="alert-dialog-slide-description"
+      >
+        {props.isSearch ? (
+          <>
+          <DialogTitle>Search for restuarant</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">{props.venueName} : {props.venueLink}</DialogContentText>
+            <Autocomplete
+              id="select-restaurant"
+              onChange={(event, newValue) => { setSelected(newValue) }}
+              sx={{ marginTop: 1, width: 300 }}
+              options={props.searchOptions}
+              autoHighlight
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Restuarant name"
+                  inputProps={{
+                    ...params.inputProps,
+                    autoComplete: 'new-password'
+                  }}
+                />
+              )}
+            />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleNo}>No</Button>
-            <Button onClick={handleYes}>Yes</Button>
+            <Button onClick={handleSelection}>Select</Button>
           </DialogActions>
-        </Dialog>
+        </>
+        ) : (
+          <>
+            <DialogTitle>Is this the correct venue?</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                {props.venueName} in {props.venueNeighborhood}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleNo}>No</Button>
+              <Button onClick={handleYes}>Yes</Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
     );
 }
 

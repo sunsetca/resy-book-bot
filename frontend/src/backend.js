@@ -18,28 +18,47 @@ async function deleteResyToken(params) {
 }
 
 async function requestReservationTask(formData) {
-    let response = await axios.post('/resy/create', formData);
-    return response;
-}
-
-async function searchVenue(params) {
-    console.log(params);
-    let request_url = `/resy/search` + (new URLSearchParams({email: params.email}).toString());
-    let searchDate = new Date(Date.now());
-    searchDate.setDate(searchDate.getDate() + 1);
-    
-    let payload = {
-        "lat": params.lat,
-        "long": params.lng,
-        "day": searchDate.toDateString(),
-        "party_size": 2
-    };
+    let request_url = `/resy/create?` + new URLSearchParams({ uid: formData.uid }).toString();
+    let payload = createFormPayload(formData);
     let response = await axios.post(request_url, payload);
     return response;
+  }
+  
+
+async function searchVenue(params) {
+    let request_url = `/resy/search?` + (new URLSearchParams({email: params.email}).toString());
+    let searchDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    let headers = {
+        'RESY-AUTH-TOKEN': params.resyToken,
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    let payload = createFormPayload({
+        "lat": params.lat,
+        "lon": params.lon,
+        "day": searchDate,
+        "party_size": 5
+    });
+
+    let response = await axios.post(request_url, payload, { headers: headers });
+    return response;
 }
 
-async function getUserResyToken(firebaseUID) {
+function createFormPayload(formData) {
+    let payload = new FormData();
 
+    for (const key in formData) {
+        if (formData.hasOwnProperty(key)) {
+          if (Array.isArray(formData[key])) {
+            formData[key].forEach((item, index) => {
+              payload.append(`${key}-${index}`, item);
+            });
+          } else {
+            payload.append(key, formData[key]);
+          }
+        }
+      }
+    return payload;
 }
 
 export {

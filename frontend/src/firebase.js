@@ -102,7 +102,7 @@ const resetPassword = async (email) => {
 const getResyToken = async (firebaseUID) => {
     const docRef = doc(firestore, "resy_tokens", firebaseUID);
     const docSnap = await getDoc(docRef);
-
+    
     if (docSnap.exists()){
         return docSnap.data();
     } else {

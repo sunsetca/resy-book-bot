@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { saveUser, saveFirebaseUID, saveResyToken } from '../redux/authSlice';
 
 const Navbar = () => {
-  const {user} = useSelector((state) => state.auth);
+  const { user, firebaseUID } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   
   const logoutCurrentUser = async () => {
@@ -24,7 +24,7 @@ const Navbar = () => {
           R.I.P Reservation
         </Typography>
         
-        { user ? "" : <Button color="inherit" component={NavLink} to="/register" exact="true">Register</Button> }
+        { user ? <Button color="inherit" component={NavLink} to={`/user/${firebaseUID}`} exact="true">Profile</Button> : <Button color="inherit" component={NavLink} to="/register" exact="true">Register</Button> }
         { user 
           ? 
             <Button color="inherit" onClick={logoutCurrentUser} exact="true">Logout</Button>

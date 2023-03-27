@@ -53,10 +53,8 @@ function Login() {
 
 
   const onSubmit = async (data) => {
-    let email = data.email;
-    let password = data.password;
     let remember = data.remember;
-    await signInEmailPw(email, password);
+    await signInEmailPw(data.email, data.password);
     dispatch(saveRememberChoice(remember));
   };
 

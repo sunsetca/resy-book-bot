@@ -1,6 +1,9 @@
 import Container from "@mui/material/Container";
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { Link, useLoaderData } from 'react-router-dom';
 import {getUserProfile} from '../../backend';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +32,6 @@ const Profile = () => {
     });
 
     useEffect(() => {
-        console.log("Profile useEffect is called");
         if (user && !fetched) {
             (async () => {
                 const fetchedUserData = await loader({ params: { userId: firebaseUID } });
@@ -52,8 +54,20 @@ const Profile = () => {
 
     return (
         <Container component="main" maxWidth="s">
+            <Box
+          sx={{
+          marginTop: 5,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          }}>
+            <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+                <AccountBoxIcon />
+            </Avatar>
             <Typography component="h1" variant="h5">Your Profile</Typography>
-            {resyAction}
+                {resyAction}
+          </Box>
+            
         </Container>
     );
 };
