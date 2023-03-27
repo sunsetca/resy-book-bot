@@ -40,7 +40,7 @@ def venue_details():
 			return Response(status=403)
 		print(dict(request.headers))
 		resy_client.set_token(request.headers.get('RESY-AUTH-TOKEN'))
-		venue_details = [] #resy_client.get_venue_details(request.args.get('venue_id'))
+		venue_details = resy_client.get_venue_details(request.args.get('venue_id'))
 		return Response(response=json.dumps(venue_details), status=200)
 	else:
 		return Response(response="unauthorized search, please login", status=403)
@@ -65,7 +65,7 @@ def create_resy_task():
 		'venue_id': resy_watch_form.venue_id.data,
 		'res_times': [f"{res_day} {res_time}" for res_time in resy_watch_form.resTimes.data]
 		}
-		print(resy_task)
-		return Response(response="resp.name", status=201)
+		resp = task_handler.create_task(resy_task)
+		return Response(response=resp.name, status=201)
 	else:
 		return Response(response=json.dumps({"reason": "invalid form submission", "detail": resy_watch_form.errors}), status=400)
