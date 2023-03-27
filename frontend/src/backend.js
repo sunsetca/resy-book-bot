@@ -49,7 +49,7 @@ async function getVenueDetails(params) {
     let headers = {
         'RESY-AUTH-TOKEN': params.resyToken
     }
-    let response = await axios.get(request_url, { headers: headers });
+    let response = await axios.get(request_url, { headers: headers }).then((response) => { return response }).catch((err) => { return err });
     return response;
 }
 

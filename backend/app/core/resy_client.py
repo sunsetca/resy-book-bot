@@ -81,7 +81,6 @@ class ResyClient:
 			batched_results = {'search': [], 'primary': {}}
 			if len(json_resp['results']['venues']) > 0:
 				for res in json_resp['results']['venues']:
-					print(res['venue']['name'])
 					result_lat = res['venue']['location']['geo']['lat']
 					result_long = res['venue']['location']['geo']['lon']
 					restaurant = res['venue']['name']

@@ -23,12 +23,23 @@ function RegisterVenueForm(){
 
     const onSubmit = async (data) => {
         console.log(data);
-        let { id, name, website, neighborhood,  lat, lon } = await getVenueDetails({venueId: parseInt(data.venue), resyToken: resyToken});
-        dispatch(saveVenueId(id));
-        dispatch(saveVenue(name));
-        dispatch(saveWebsite(website));
-        dispatch(saveNeighborhood(neighborhood));
-        dispatch(saveLatLon({lat, lon}));
+        let res = await getVenueDetails({venueId: parseInt(data.venue), resyToken: resyToken}).then((res) => {
+            if (res.status === 200) {
+                return res.data;
+            } else {
+                console.log("Error getting venue details");
+                console.log(res.message);
+                // defaulting to saving the venue id that the user input
+                dispatch(saveVenueId(data.venue));
+                dispatch(saveVenue(data.venue));
+                navigate(`/user/${firebaseUID}/resy-res-request/`);
+            }
+        });
+        dispatch(saveVenueId(res.id));
+        dispatch(saveVenue(res.name));
+        dispatch(saveWebsite(res.website));
+        dispatch(saveNeighborhood(res.neighborhood));
+        dispatch(saveLatLon({lat: res.lat, lon: res.lon}));
         navigate(`/user/${firebaseUID}/resy-res-request/`);
     }
 

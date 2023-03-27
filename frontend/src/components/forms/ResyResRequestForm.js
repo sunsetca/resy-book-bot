@@ -33,7 +33,9 @@ function ResyResRequestForm(){
     append({resTime: subHours(today, today.getTimezoneOffset() / 60)});
   }
   const handleOpen = () => {
-    setOpen(true);
+    // setOpen(true);
+    // skipping the attemmpt to open the modal and just going straight to rerouting to the venue search page
+    navigate(`/user/${firebaseUID}/deep-link-venue/`);
   }
   const handleClose = () => {
     setOpen(false);

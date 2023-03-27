@@ -26,6 +26,8 @@ def search():
 			}
 			resy_client.set_token(request.headers.get('RESY-AUTH-TOKEN'))
 			venues = resy_client.find_venue(request.args.get('email'), query_params)
+			if venues is None:
+				return Response(response=json.dumps({"message": "an error occured in resy, check logs"}), status=419)
 			return Response(response=json.dumps(venues), status=200)
 		else:
 			return Response(response=json.dumps({"reason": "invalid form submission", "detail": venue_search_form.errors}), status=400)
@@ -38,9 +40,10 @@ def venue_details():
 	if request.method == 'GET':
 		if request.headers.get('RESY-AUTH-TOKEN') is None:
 			return Response(status=403)
-		print(dict(request.headers))
 		resy_client.set_token(request.headers.get('RESY-AUTH-TOKEN'))
 		venue_details = resy_client.get_venue_details(request.args.get('venue_id'))
+		if venue_details is None:
+			return Response(response=json.dumps({"message": "an error occured in resy, check logs"}), status=419)
 		return Response(response=json.dumps(venue_details), status=200)
 	else:
 		return Response(response="unauthorized search, please login", status=403)
