@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import GooglePlacesAutocomplete, { geocodeByPlaceId } from 'react-google-places-autocomplete';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveLatLong, saveVenue, saveVenueId, saveNeighborhood } from '../../redux/venueSlice';
+import { saveLatLon, saveVenue, saveVenueId, saveNeighborhood, saveWebsite } from '../../redux/venueSlice';
 import VenueSelectionDialog from '../VenueSelectionDialog';
 import { searchVenue } from '../../backend';
 import { getResyToken } from '../../firebase';
@@ -17,8 +17,8 @@ const VenueRequestForm = (props) => {
     const [clear, setClear] = useState(false);
     const [isSearch, setSearch] = useState(false);
     const [searchOptions, setSearchOptions] = useState([]);
-    const {lon, lat, venue, neighborhood} = useSelector((state) => state.venue);
-    const { user, firebaseUID } = useSelector((state) => state.auth);
+    const {lon, lat, venue, neighborhood, website} = useSelector((state) => state.venue);
+    const { user, firebaseUID, resyToken } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
 
     const updateSelection = async (selection) => {
@@ -27,19 +27,21 @@ const VenueRequestForm = (props) => {
         await geocodeByPlaceId(selection.value.place_id).then(results => {
             let lat = results[0].geometry.location.lat();
             let lon = results[0].geometry.location.lng();
-            dispatch(saveLatLong({lon: lon, lat: lat}));
+            dispatch(saveLatLon({lon: lon, lat: lat}));
         })
 
     }
     
     const onClick = async () => {
-        let resyToken = await getResyToken(firebaseUID);
-        let resp = await searchVenue({lon: lon, lat: lat, email: user.email, resyToken: resyToken._token});
+        let activeResyToken = resyToken || await getResyToken(firebaseUID);
+        let resp = await searchVenue({lon: lon, lat: lat, email: user.email, resyToken: (activeResyToken || activeResyToken._token), partySize: props.partySize});
         let { search, primary } = resp.data;
         console.log(resp.data);
         dispatch(saveVenue(primary.name))
         dispatch(saveVenueId(primary.id))
         dispatch(saveNeighborhood(primary.neighborhood));
+        dispatch(saveLatLon({lon: primary.lon, lat: primary.lat}));
+        dispatch(saveWebsite(primary.website));
         setSearchOptions(search);
         setClear(true);
         setOpen(true);
@@ -70,7 +72,7 @@ const VenueRequestForm = (props) => {
                 Select Restaurant
             </Button>
             {/** This is a terrible anti pattern where I'm passing down multiple state handlers so that they can be operated at their youngest descendent */}
-            <VenueSelectionDialog isOpen={isOpen} setOpen={setOpen} setMapSearchClear={setClear} isSearch={isSearch} setSearch={setSearch} parentModalClose={props.parentModalClose} venueName={venue} venueNeighborhood={neighborhood} searchOptions={searchOptions}/>
+            <VenueSelectionDialog isOpen={isOpen} setOpen={setOpen} setMapSearchClear={setClear} isSearch={isSearch} setSearch={setSearch} parentModalClose={props.parentModalClose} venueName={venue} venueNeighborhood={neighborhood} venueSite={website} searchOptions={searchOptions}/>
         </>
     )
 }

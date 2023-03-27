@@ -42,6 +42,10 @@ class ResyApiWrapper:
 		find_venues_url = f"{self.base_url}/4/find?" + urlencode(search_request)
 		return self.session.get(url=find_venues_url)
 
+	def get_venue_details(self, venue_id):
+		self.api_wrapper_logger.info(f"Attempting to get venue details for {venue_id}")
+		return self.session.get(f"{self.base_url}/3/venue?id={venue_id}")
+
 	def get_reservation_details(self, booking_request):
 		self.api_wrapper_logger.info(f"Attempting to get reservation details for {booking_request['config_id']}")
 		res_details_url = f"{self.base_url}/3/details?" + urlencode(booking_request, encoding='UTF-8')

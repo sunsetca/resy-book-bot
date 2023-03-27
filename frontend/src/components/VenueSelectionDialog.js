@@ -9,8 +9,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useDispatch } from 'react-redux';
-import { saveLatLong, saveVenue, saveVenueId } from '../redux/venueSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveLatLon, saveVenue, saveVenueId } from '../redux/venueSlice';
+import { Typography } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+import Link from '@mui/material/Link';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -18,6 +21,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 function VenueSelectionDialog(props){
     const [selected, setSelected] = useState(null);
+    const { firebaseUID } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
 
     const handleClose = () => {
@@ -29,18 +33,17 @@ function VenueSelectionDialog(props){
     };
     const handleYes = () => {
       props.parentModalClose(false);
-      props.setOpen(false);
+      props.setOpen();
     };
 
     const handleSelection = () => {
-      dispatch(saveLatLong({lat: selected.lat, lon: selected.lon}));
+      dispatch(saveLatLon({lat: selected.lat, lon: selected.lon}));
       dispatch(saveVenue(selected.name));
       dispatch(saveVenueId(selected.id));
       console.log(selected);
       props.setSearch(false);
       props.setOpen(false);
-      props.parentModalClose(false);
-
+      props.parentModalClose();
     }
 
     return (
@@ -55,6 +58,9 @@ function VenueSelectionDialog(props){
           <>
           <DialogTitle>Search for restuarant</DialogTitle>
           <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              <Typography>If you are still unable to find the restaurant via search box please navigate <RouterLink to={`/user/${firebaseUID}/deep-link-venue`}>here</RouterLink></Typography>
+            </DialogContentText>
             <Autocomplete
               id="select-restaurant"
               onChange={(event, newValue) => { setSelected(newValue) }}
@@ -83,7 +89,7 @@ function VenueSelectionDialog(props){
             <DialogTitle>Is this the correct venue?</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-slide-description">
-                {props.venueName} in {props.venueNeighborhood}
+                {props.venueName} in {props.venueNeighborhood} {props.venueSite}
               </DialogContentText>
             </DialogContent>
             <DialogActions>

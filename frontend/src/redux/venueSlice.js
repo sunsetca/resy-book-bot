@@ -5,6 +5,7 @@ const initialState = {
     loading: false,
     venue: null,
     neighborhood: null,
+    website: null,
     lon: null,
     lat: null,
     error: null
@@ -15,7 +16,7 @@ const venueSlice = createSlice({
     name: 'venue',
     initialState,
     reducers: {
-        saveLatLong(state, action){
+        saveLatLon(state, action){
             state.lon = action.payload.lon;
             state.lat = action.payload.lat;
         },
@@ -27,9 +28,12 @@ const venueSlice = createSlice({
         },
         saveNeighborhood(state, action){
             state.neighborhood = action.payload
+        },
+        saveWebsite(state, action){
+            state.website = action.payload
         }
     }
 });
 
-export const { saveLatLong, saveVenueId, saveVenue, saveNeighborhood } = venueSlice.actions;
+export const { saveLatLon, saveVenueId, saveVenue, saveNeighborhood, saveWebsite } = venueSlice.actions;
 export default venueSlice.reducer;

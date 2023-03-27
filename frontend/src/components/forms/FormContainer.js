@@ -5,6 +5,7 @@ import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import LocationSearchingIcon from '@mui/icons-material/LocationSearching';
+import LinkIcon from '@mui/icons-material/Link';
 import { Divider } from '@mui/material';
 
 import Box from '@mui/material/Box';
@@ -16,8 +17,9 @@ import ResyResRequestForm from './ResyResRequestForm';
 import ResyTokenForm from './ResyTokenForm';
 import PasswordResetForm from './PasswordResetForm';
 import VenueRequestForm from './VenueSearchForm';
+import RegisterVenueForm from './RegisterVenueForm';
 import Login, { LoginWithOtherProviders } from './LoginForm';
-import AuthTokenHowTo from '../AuthTokenHowTo';
+import { AuthTokenHowTo, VenueIdHowTo } from '../HowTo';
 
 
 function FormContainer(props){
@@ -80,11 +82,16 @@ const WrappedVenueSearchForm = () => {
   return <FormContainer avatar={<LocationSearchingIcon/>} typography="Find venue" form={<VenueRequestForm/>}/>
 }
 
+const WrappedRegisterVenueForm = () => {
+  return <FormContainer avatar={<LinkIcon/>} typography="Register venue" form={<RegisterVenueForm/>} leftChild={<VenueIdHowTo/>}/>
+}
+
 export {
   WrappedRegistrationForm,
   WrappedResyResRequestForm,
+  WrappedRegisterVenueForm,
   WrappedResyTokenForm,
   WrappedSignInForm,
   WrappedPasswordResetForm,
-  WrappedVenueSearchForm
+  WrappedVenueSearchForm,
 }

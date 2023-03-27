@@ -1,14 +1,11 @@
-import Container from "@mui/material/Container";
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { Link, useLoaderData } from 'react-router-dom';
 import {getUserProfile} from '../../backend';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { Avatar, Box, Button, Container, Typography, Table, TableContainer, TableHead, TableCell, TableRow, TableBody } from "@mui/material";
+import { Paper } from "@mui/material";
 
 async function loader({ params }) {
     const userData = await getUserProfile({
@@ -65,6 +62,33 @@ const Profile = () => {
                 <AccountBoxIcon />
             </Avatar>
             <Typography component="h1" variant="h5">Your Profile</Typography>
+            <Typography component="h3" variant="h5">Current reservation bot requests</Typography>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Task ID</TableCell>
+                            <TableCell align="right">Venue</TableCell>
+                            <TableCell align="right">Reservation Date</TableCell>
+                            <TableCell align="right">Reservation Time</TableCell>
+                            <TableCell align="right">Reservation Size</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {userData.tasks.map((row) => (
+                            <TableRow
+                                key={row.task_id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row">{row.venue_id}</TableCell>
+                                <TableCell align="right">{row.res_day}</TableCell>
+                                <TableCell align="right">{row.res_times}</TableCell>
+                                <TableCell align="right">{row.party_size}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
                 {resyAction}
           </Box>
             

@@ -94,10 +94,26 @@ class ResyClient:
 						self.resy_client_logger.info(f"Found restaurant: {restaurant} for {email}")
 			return batched_results
 		else:
-			print("Unable to query resy for available restaurants")
 			self.resy_client_logger.error(f"Resy response error {result.status_code}, {result.text}")
 			return None
 
+	def get_venue_details(self, venue_id):
+		self.resy_client_logger.info(f"Attempting to get details for restaurant: {venue_id}")
+		result = self.resy_api.get_venue_details(venue_id)
+		if result.status_code == 200:
+			venue = result.json()
+			venue_details = {
+				'id': venue['id']['resy'],
+				'name': venue['name'],
+				'website': venue['links']['web'],
+				'neighborhood': venue['location']['neighborhood'],
+				'lat': venue['location']['latitude'],
+				'lon': venue['location']['longitude']
+			}
+			return venue_details
+		else:
+			self.resy_client_logger.error(f"Resy response error {result.status_code}, {result.text}")
+			return None
 
 	def get_res_list(self, email):
 		return self.resy_api.get_res_list(email).json()

@@ -11,15 +11,16 @@ import {
   WrappedResyTokenForm, 
   WrappedResyResRequestForm,
   WrappedPasswordResetForm, 
-  WrappedVenueSearchForm} from './components/forms/FormContainer';
+  WrappedVenueSearchForm,
+  WrappedRegisterVenueForm} from './components/forms/FormContainer';
 import Profile from './components/user/Profile';
 import Home from './components/Home';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { defaultTheme } from './defaultTheme';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { auth } from './firebase';
-import { saveFirebaseUID, saveUser } from './redux/authSlice';
+import { auth, getResyToken } from './firebase';
+import { saveFirebaseUID, saveUser, saveResyToken } from './redux/authSlice';
 
 
 const theme = createTheme(defaultTheme);
@@ -63,8 +64,9 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage/>
       },
       {
-        path: "user/venue-search",
-        element: <WrappedVenueSearchForm/>
+        path: "user/:userId/deep-link-venue/",
+        element: <WrappedRegisterVenueForm/>,
+        errorElement: <ErrorPage/>
       },
     ],
   }
@@ -74,14 +76,17 @@ function App() {
   const dispatch = useDispatch();
   
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const {displayName, email, uid} = user;
+        let resyToken = await getResyToken(uid);
         dispatch(saveUser({displayName, email}));
         dispatch(saveFirebaseUID(uid));
+        dispatch(saveResyToken(resyToken));
       } else {
         dispatch(saveUser(null));
         dispatch(saveFirebaseUID(null));
+        dispatch(saveResyToken(null));
       }
     });
     return unsubscribe;

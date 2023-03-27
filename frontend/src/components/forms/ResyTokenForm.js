@@ -1,16 +1,18 @@
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { HookTextField, useHookForm } from 'mui-react-hook-form-plus';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { authorizeResyToken } from '../../backend';
 import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
+import { saveResyToken } from '../../redux/authSlice';
 
 function ResyTokenForm(){
   const defaultValues = { email: ''};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
   const {user, firebaseUID} = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!user) {
@@ -20,6 +22,7 @@ function ResyTokenForm(){
 
   const onSubmit = async (data) => {
     await authorizeResyToken(data);
+    dispatch(saveResyToken(data.resy_token));
     navigate(`/user/${firebaseUID}`);
   }
 

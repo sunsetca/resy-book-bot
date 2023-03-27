@@ -15,11 +15,12 @@ import { useState } from 'react';
 import VenueRequestForm from './VenueSearchForm';
 
 function ResyResRequestForm(){
-  const today = new Date()
+  const today = new Date(Date.now() + 24 * 60 * 60 * 1000)
   const [open, setOpen] = useState(false);
+  const [partySize, setPartySize] = useState(1);
   const {venue, id} = useSelector((state) => state.venue);
   const { user, firebaseUID } = useSelector((state) => state.auth);
-  const defaultValues = {resLiveDate: today, resDay: today, partySize: "1", resTimes: []};
+  const defaultValues = {resLiveDate: today, resDay: today, partySize: partySize.toString(), resTimes: []};
   const { registerState, control, handleSubmit } = useHookForm({ defaultValues, });
   const navigate = useNavigate();
   const { fields, append, remove }  = useFieldArray({
@@ -38,11 +39,15 @@ function ResyResRequestForm(){
     setOpen(false);
   }
 
+  const onPartySizeChange = (e) => {
+    setPartySize(parseInt(e.target.value));
+  }
+
   const onSubmit = async (data) => {
     let email = user.email;
     data.resLiveDate = data.resLiveDate.toISOString().slice(0, 19).replace('T', ' ');
     data.resDay = data.resDay.toISOString().slice(0, 10);
-    data.venue_id = 1000; // or would be the id variabe
+    data.venue_id = id;
     data.partySize = parseInt(data.partySize);
     data.uid = firebaseUID;
     data.resTimes = data.resTimes.map((resTime) => {
@@ -67,18 +72,20 @@ function ResyResRequestForm(){
   return(
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={3}>
-          <Grid item xs={14}>
-            <HookDateTimePicker {...registerState('resLiveDate')} rules={{required: true}} datePickerProps={{autoComplete: "date", autoFocus: true, margin: "normal", fullWidth: true, label: "Time that reservations go live", disablePast:true}}/>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Typography>Date and time reservations go live:</Typography>
+            <HookDateTimePicker {...registerState('resLiveDate')} rules={{required: true}} datePickerProps={{autoComplete: "date", autoFocus: true, margin: "normal", label: "Time that reservations go live", disablePast:true, sx: {marginTop: 1}}} fullWidth/>
           </Grid>
           <Grid item xs={12}>
-            <HookDatePicker {...registerState('resDay')} rules={{required: true}} datePickerProps={{autoComplete: "date", autoFocus: true, margin: "normal", fullWidth: true, label: "Reservation Date", disablePast:true}}/>
+            <HookDatePicker {...registerState('resDay')} rules={{required: true}} datePickerProps={{autoComplete: "date", autoFocus: true, margin: "normal", fullWidth: true, label: "Reservation Date", disablePast:true, sx: {marginTop: 1}}}/>
           </Grid>
           <Grid item xs={12}>
-            <HookSelect {...registerState('partySize')} label="Party Size" rules={{required: true}} selectProps={{clearable: true}} items={partySizeOptions}/>
+            <HookSelect {...registerState('partySize')} label="Party Size" rules={{required: true}} selectProps={{clearable: true, onChange: onPartySizeChange, sx: {marginTop:"0"}}} items={partySizeOptions}/>
           </Grid>
           <Grid item xs={12}>
-            <HookTextField {...registerState('venue')} textFieldProps={{label: "Venue", value: venue ? venue : "Cafe Rosarito", disabled:true}}/>
+            <Typography>Restaurant:</Typography>
+            <HookTextField {...registerState('venue')} textFieldProps={{label: "Venue", value: venue ? venue : "Cafe Rosarito", disabled:true, sx: {marginTop: 1}}}/>
             <Button onClick={handleOpen}>Change venue</Button>
             
           </Grid>
@@ -94,7 +101,7 @@ function ResyResRequestForm(){
             boxShadow: 24,
             p: 4,
           }}>
-                <VenueRequestForm parentModalClose={handleClose}/>
+                <VenueRequestForm parentModalClose={handleClose} partySize={partySize}/>
               </Box>
 
             </Modal>
