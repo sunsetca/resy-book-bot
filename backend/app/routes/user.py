@@ -50,6 +50,6 @@ def get_user_profile():
 	user_id = request.args.get('userId')
 	user = account_handler.get_user_account(user_id)
 	active_token = account_handler.valid_resy_token(user_id)
-	tasks = task_handler.active_tasks(user.email)
+	tasks = task_handler.active_tasks(user_id)
 
 	return Response(response=json.dumps({'tasks': tasks, 'activeToken': active_token}), status=200)

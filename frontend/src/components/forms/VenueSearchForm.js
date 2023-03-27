@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -11,6 +11,7 @@ import { saveLatLon, saveVenue, saveVenueId, saveNeighborhood, saveWebsite } fro
 import VenueSelectionDialog from '../VenueSelectionDialog';
 import { searchVenue } from '../../backend';
 import { getResyToken } from '../../firebase';
+import { useNavigate } from 'react-router-dom';
 
 const VenueRequestForm = (props) => {
     const [isOpen, setOpen] = useState(false);
@@ -20,10 +21,15 @@ const VenueRequestForm = (props) => {
     const {lon, lat, venue, neighborhood, website} = useSelector((state) => state.venue);
     const { user, firebaseUID, resyToken } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!user) {
+            navigate('/login');
+        }
+    });
 
     const updateSelection = async (selection) => {
-        console.log(selection);
-        console.log(`prev long lat ${lon}:${lat}`)
         await geocodeByPlaceId(selection.value.place_id).then(results => {
             let lat = results[0].geometry.location.lat();
             let lon = results[0].geometry.location.lng();
@@ -36,7 +42,6 @@ const VenueRequestForm = (props) => {
         let activeResyToken = resyToken || await getResyToken(firebaseUID);
         let resp = await searchVenue({lon: lon, lat: lat, email: user.email, resyToken: (activeResyToken || activeResyToken._token), partySize: props.partySize});
         let { search, primary } = resp.data;
-        console.log(resp.data);
         dispatch(saveVenue(primary.name))
         dispatch(saveVenueId(primary.id))
         dispatch(saveNeighborhood(primary.neighborhood));

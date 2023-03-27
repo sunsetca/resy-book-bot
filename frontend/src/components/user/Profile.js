@@ -44,7 +44,7 @@ const Profile = () => {
     }
 
     if (userData && userData.activeToken){
-        resyAction = <Button><Link to={`resy-res-request`}>Create Reservation Task Request</Link></Button>;
+        resyAction = <Button xs={{marginTop: 2, marginBottom: 2}}><Link to={`resy-res-request`}>Create Reservation Task Request</Link></Button>;
     } else {
         resyAction = <Button><Link to={`resy-auth`}>Register Resy Auth</Link></Button>;
     }
@@ -82,7 +82,8 @@ const Profile = () => {
                                     key={row.task_id}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
-                                    <TableCell component="th" scope="row">{row.venue_id}</TableCell>
+                                    <TableCell component="th" scope="row">{row.task_id}</TableCell>
+                                    <TableCell align="right">{row.venue_id}</TableCell>
                                     <TableCell align="right">{row.res_day}</TableCell>
                                     <TableCell align="right">{row.res_times}</TableCell>
                                     <TableCell align="right">{row.party_size}</TableCell>

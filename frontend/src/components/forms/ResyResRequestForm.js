@@ -11,7 +11,7 @@ import { subHours } from 'date-fns';
 import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { requestReservationTask } from '../../backend';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import VenueRequestForm from './VenueSearchForm';
 
 function ResyResRequestForm(){
@@ -26,6 +26,12 @@ function ResyResRequestForm(){
   const { fields, append, remove }  = useFieldArray({
     control,
     name: "resTimes"
+  });
+
+  useEffect(() => {
+    if (!user) {
+        navigate('/login');
+    }
   });
   
   const partySizeOptions = Array.from(Array(8).keys()).map((i) => {return {label: (i + 1).toString(), value: (i + 1).toString()}});
