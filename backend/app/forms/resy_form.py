@@ -5,25 +5,26 @@ from wtforms.validators import InputRequired
 
 class ResyTokenForm(FlaskForm):
 	email = EmailField('email', validators=[InputRequired()])
-	resy_token = StringField('resy_token', validators=[InputRequired()])
+	resy_token = StringField('resyToken', validators=[InputRequired()])
 
 
 class ResyFindVenueForm(FlaskForm):
-	day = DateField('res_day', format='%Y-%m-%d', validators=[InputRequired()])
-	party_size = IntegerField('party_size', validators=[InputRequired()])
+	day = DateField('day', format='%Y-%m-%d', validators=[InputRequired()])
+	party_size = IntegerField('partySize', validators=[InputRequired()])
 	lat = FloatField('latitude', validators=[InputRequired()])
-	long = FloatField('longitude', validators=[InputRequired()])
+	lon = FloatField('longitude', validators=[InputRequired()])
 
 
 class ResTimeForm(FlaskForm):
 	ranking = IntegerField('ranking', validators=[InputRequired()])
-	res_time = TimeField('res_time', format='%H:%M', validators=[InputRequired()])
-	table_type = StringField('table_type')
+	res_time = TimeField('resTime', format='%H:%M', validators=[InputRequired()])
+	table_type = StringField('tableType')
 
 
 class ResyReservationWatchForm(FlaskForm):
-	res_live_date = DateTimeField('res_live_date', format='%Y-%m-%d %H:%M:%S', validators=[InputRequired()])
-	res_day = DateField('res_day', format='%Y-%m-%d', validators=[InputRequired()])
-	party_size = IntegerField('party_size', validators=[InputRequired()])
-	venue_id = IntegerField('venue_id')
-	res_times = FieldList(StringField('res_times', validators=[InputRequired()]))
+	uid = StringField('uid', validators=[InputRequired()])
+	resLiveDate = DateTimeField('resLiveDate', format='%Y-%m-%d %H:%M:%S', validators=[InputRequired()])
+	resDay = DateField('resDay', format='%Y-%m-%d', validators=[InputRequired()])
+	partySize = IntegerField('partySize', validators=[InputRequired()])
+	venue_id = IntegerField('venue_id', validators=[InputRequired()])
+	resTimes = FieldList(StringField('resTimes', validators=[InputRequired()]))

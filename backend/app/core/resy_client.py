@@ -35,7 +35,7 @@ class ResyClient:
 			book_token = details_resp['book_token']['value']
 			payment_id = details_resp['user']['payment_methods'][0]['id']
 			booking_resp = self.resy_api.create_reservation(payment_id, book_token).json()
-			res_list = self.resy_api.get_res_list(payload['email']).json()
+			res_list = self.get_res_list(payload['email'])
 			confirmed_reservation = any(
 				booking_resp['reservation_id'] == res['reservation_id'] for res in res_list['reservations'])
 
@@ -75,8 +75,51 @@ class ResyClient:
 
 	def find_venue(self, email, query):
 		self.resy_client_logger.info(f"Attempting to search for available restaurants for: {email}")
-		return self.resy_api.find_venue(query)
+		result = self.resy_api.find_venue(query)
+		if result.status_code == 200:
+			json_resp = result.json()
+			batched_results = {'search': [], 'primary': {}}
+			if len(json_resp['results']['venues']) > 0:
+				for res in json_resp['results']['venues']:
+					result_lat = res['venue']['location']['geo']['lat']
+					result_long = res['venue']['location']['geo']['lon']
+					restaurant = res['venue']['name']
+					id = res['venue']['id']['resy']
+					neighborhood = res['venue']['location']['neighborhood']
+					batched_results['search'].append({'id': id, 'name': restaurant, 'neighborhood': neighborhood, 'lat': result_lat, 'long': result_long})
 
+					if (round(query.get('lat'), 3) == round(result_lat, 3)) and (round(query.get('long'), 3) == round(result_long, 3)):
+						batched_results['primary'] = {'id': id, 'name': restaurant, 'neighborhood': neighborhood}
+						self.resy_client_logger.info(f"Found restaurant: {restaurant} for {email}")
+			return batched_results
+		else:
+			self.resy_client_logger.error(f"Resy response error {result.status_code}, {result.text}")
+			return None
+
+	def get_venue_details(self, venue_id):
+		self.resy_client_logger.info(f"Attempting to get details for restaurant: {venue_id}")
+		result = self.resy_api.get_venue_details(venue_id)
+		if result.status_code == 200:
+			venue = result.json()
+			venue_details = {
+				'id': venue['id']['resy'],
+				'name': venue['name'],
+				'website': venue['links']['web'],
+				'neighborhood': venue['location']['neighborhood'],
+				'lat': venue['location']['latitude'],
+				'lon': venue['location']['longitude']
+			}
+			return venue_details
+		else:
+			self.resy_client_logger.error(f"Resy response error {result.status_code}, {result.text}")
+			return None
+
+	def get_res_list(self, email):
+		return self.resy_api.get_res_list(email).json()
+	
+	def set_token(self, token):
+		self.resy_api.set_resy_token(token)
+		return
 
 def build_priority_list(venue_slots: SortedList, res_times: List[str]) -> List[Tuple]:
 	priority_list = []
