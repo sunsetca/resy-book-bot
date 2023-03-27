@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { saveLatLon, saveVenue, saveVenueId } from '../redux/venueSlice';
 import { Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import Link from '@mui/material/Link';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;

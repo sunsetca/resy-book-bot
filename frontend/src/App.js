@@ -10,8 +10,7 @@ import {
   WrappedSignInForm, 
   WrappedResyTokenForm, 
   WrappedResyResRequestForm,
-  WrappedPasswordResetForm, 
-  WrappedVenueSearchForm,
+  WrappedPasswordResetForm,
   WrappedRegisterVenueForm} from './components/forms/FormContainer';
 import Profile from './components/user/Profile';
 import Home from './components/Home';

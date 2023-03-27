@@ -1,5 +1,5 @@
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {getUserProfile} from '../../backend';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
