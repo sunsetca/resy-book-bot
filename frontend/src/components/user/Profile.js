@@ -4,7 +4,7 @@ import {getUserProfile} from '../../backend';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Container, Typography, Table, TableContainer, TableHead, TableCell, TableRow, TableBody } from "@mui/material";
+import { Avatar, Box, Button, Container, Divider, Typography, Table, TableContainer, TableHead, TableCell, TableRow, TableBody } from "@mui/material";
 import { Paper } from "@mui/material";
 
 async function loader({ params }) {
@@ -58,11 +58,12 @@ const Profile = () => {
           flexDirection: 'column',
           alignItems: 'center',
           }}>
-            <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+            <Avatar sx={{m: 1}}>
                 <AccountBoxIcon />
             </Avatar>
             <Typography component="h1" variant="h5">Your Profile</Typography>
-            <Typography component="h3" variant="h5">Current reservation bot requests</Typography>
+            <Divider flexItem={true} sx={{marginTop: 2, marginBottom: 2}}/>
+            <Typography component="h3" variant="h5" >Current reservation bot requests</Typography>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
@@ -71,21 +72,23 @@ const Profile = () => {
                             <TableCell align="right">Venue</TableCell>
                             <TableCell align="right">Reservation Date</TableCell>
                             <TableCell align="right">Reservation Time</TableCell>
-                            <TableCell align="right">Reservation Size</TableCell>
+                            <TableCell align="right">Party Size</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {userData.tasks.map((row) => (
-                            <TableRow
-                                key={row.task_id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row">{row.venue_id}</TableCell>
-                                <TableCell align="right">{row.res_day}</TableCell>
-                                <TableCell align="right">{row.res_times}</TableCell>
-                                <TableCell align="right">{row.party_size}</TableCell>
-                            </TableRow>
-                        ))}
+                        { userData.tasks ? 
+                            userData.tasks.map((row) => (
+                                <TableRow
+                                    key={row.task_id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">{row.venue_id}</TableCell>
+                                    <TableCell align="right">{row.res_day}</TableCell>
+                                    <TableCell align="right">{row.res_times}</TableCell>
+                                    <TableCell align="right">{row.party_size}</TableCell>
+                                </TableRow>
+                            )) : <></>
+                            }
                     </TableBody>
                 </Table>
             </TableContainer>

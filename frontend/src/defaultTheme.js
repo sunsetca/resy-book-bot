@@ -1,8 +1,8 @@
 export const defaultTheme = {
     root: {
-        // display: 'flex',
-        // flexDirection: 'column',
-        // alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
         marginTop: '50px',
       },
     form: {

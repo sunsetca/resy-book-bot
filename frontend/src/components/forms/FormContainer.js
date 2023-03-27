@@ -42,7 +42,7 @@ function FormContainer(props){
           flexDirection: 'column',
           alignItems: 'center',
           }}>
-          <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+          <Avatar sx={{m: 1}}>
             {props.avatar}
           </Avatar>
           <Typography component="h1" variant="h5" sx={{marginBottom: 3}}>

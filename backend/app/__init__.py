@@ -28,7 +28,7 @@ csrf = CSRFProtect()
 
 
 def create_app() -> Flask:
-	app = Flask(__name__, instance_relative_config=True)
+	app = Flask(__name__, instance_relative_config=True, static_folder='build/static', template_folder='build')
 	active_env = os.environ['ACTIVE_ENV']
 
 	if active_env is None:
