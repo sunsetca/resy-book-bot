@@ -1,21 +1,43 @@
 import json
 import logging
+import random
 from typing import Dict
 from urllib.parse import urlencode
 
-from requests import Session
+from cloudscraper import create_scraper
+
+USER_AGENTS = [
+    # Chrome
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36',
+
+    # Firefox
+    'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0',
+    'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0',
+
+    # Safari
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/601.7.7 (KHTML, like Gecko) Version/9.1.2 Safari/601.7.7',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/7046A194A',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.2 Safari/605.1.15',
+
+    # Edge
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36 Edge/13.10586'
+]
 
 
 class ResyApiWrapper:
 	api_wrapper_logger = logging.getLogger(__name__)
 
 	def __init__(self, resy_url, resy_api_key, resy_token=''):
-		self.session = Session()
+		self.session = create_scraper()
 		self.session.headers.update(
 			{
 				'authorization': "ResyAPI api_key=\"{resy_api_key}\"".format(resy_api_key=resy_api_key),
-				'user-agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-				              "(KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+				'user-agent': self.random_user_agent(),
 				'x-origin': "https://resy.com"
 			})
 		self.resy_token = resy_token
@@ -64,3 +86,6 @@ class ResyApiWrapper:
 	def get_res_list(self, email):
 		self.api_wrapper_logger.info(f"Attempting to check reservation for {email}")
 		return self.session.get(f"{self.base_url}/3/user/reservations")
+
+	def random_user_agent(self):
+		return random.choice(USER_AGENTS)
