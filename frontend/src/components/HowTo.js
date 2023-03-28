@@ -36,7 +36,7 @@ function AuthTokenHowTo() {
                         Navigate to the <code>Network</code> tab of the web console.
                     </Typography>
                     <Typography>
-                        Filter the network calls by searching for <code>api.resy.com</code> in the filter box of the network tab. (if this tab is empty, refresh page).
+                        Press record and filter the network calls by searching for <code>api.resy.com</code> in the filter box of the network tab. (if this tab is empty, refresh page).
                     </Typography>
                     <Typography>
                         Click any of the rows of network calls and search for <code>x-resy-auth-token</code> in the request headers panel.
@@ -89,7 +89,7 @@ function VenueIdHowTo() {
                         Navigate to the <code>Network</code> tab of the web console.
                     </Typography>
                     <Typography>
-                        Filter the network calls by searching for <code>api.resy.com venue</code> in the filter box of the network tab. (if this tab is empty, refresh page).
+                        Press record and filter the network calls by searching for <code>api.resy.com venue</code> in the filter box of the network tab. (if this tab is empty, refresh page).
                     </Typography>
                     <Typography>
                         Click on the network call with a lat and lon of 0 in the url path.

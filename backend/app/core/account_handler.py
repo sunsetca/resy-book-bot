@@ -39,6 +39,12 @@ class AccountHandler:
 			return firebase_user
 		return None
 
+	def get_user_email(self, user_id):
+		firebase_user: UserRecord = self.firebase_auth.get_user(user_id)
+		if firebase_user:
+			return firebase_user.email
+		return None
+
 	def save_resy_token(self, user_id, user_token):
 		self.firestore_client.collection("resy_tokens").document(user_id).create({"_token": user_token})
 		return
@@ -56,3 +62,7 @@ class AccountHandler:
 
 	def valid_resy_token(self, user_id):
 		return True if self.get_resy_token(user_id) else False
+
+	def delete_reservation_request(self, uid, task_id):
+		self.firestore_client.collection(f"reservation_task_request/${uid}/tasks").document(task_id).delete()
+		return

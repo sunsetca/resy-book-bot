@@ -1,4 +1,5 @@
 import logging
+import traceback
 from typing import Dict, List, Tuple
 
 from flask import Response
@@ -36,12 +37,12 @@ class ResyClient:
 			payment_id = details_resp['user']['payment_methods'][0]['id']
 			booking_resp = self.resy_api.create_reservation(payment_id, book_token).json()
 			res_list = self.get_res_list(payload['email'])
-			confirmed_reservation = any(
-				booking_resp['reservation_id'] == res['reservation_id'] for res in res_list['reservations'])
+			confirmed_reservation = any(booking_resp['reservation_id'] == res['reservation_id'] for res in res_list['reservations'])
 
 		except BaseException as e:
-			self.resy_client_logger.error("Unable to book {error}".format(error=str(e)))
-			return Response(response=str(e), status=500)
+			excpetion_traceback = traceback.format_exc()
+			self.resy_client_logger.error("Unable to book {error}".format(error=excpetion_traceback))
+			return Response(response=str(excpetion_traceback), status=500)
 
 		self.resy_client_logger.info("Reservation status of booking for {email} at {venue} is {res_status}"
 		                             .format(email=payload['email'], venue=payload['venue_id'],
