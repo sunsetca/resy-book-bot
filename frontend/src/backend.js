@@ -26,7 +26,7 @@ async function requestReservationTask(formData) {
   
 
 async function searchVenue(params) {
-  let request_url = `/resy/search?` + (new URLSearchParams({email: params.email}).toString());
+  let request_url = `/resy/search?` + (new URLSearchParams({uid: params.uid}).toString());
   let searchDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
   let headers = {
       'RESY-AUTH-TOKEN': params.resyToken,

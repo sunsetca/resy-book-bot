@@ -30,9 +30,7 @@ USER_AGENTS = [
 
 
 class ResyApiWrapper:
-	api_wrapper_logger = logging.getLogger(__name__)
-
-	def __init__(self, resy_url, resy_api_key, resy_token=''):
+	def __init__(self, resy_url, resy_api_key, logger: logging.Logger, resy_token=''):
 		self.session = create_scraper()
 		self.session.headers.update(
 			{
@@ -42,6 +40,7 @@ class ResyApiWrapper:
 			})
 		self.resy_token = resy_token
 		self.base_url = f"https://{resy_url}"
+		self.api_wrapper_logger = logger
 
 	def auth_user(self, user_creds):
 		# basically dead because resy api refuses any attempt to auth through the api
@@ -55,7 +54,6 @@ class ResyApiWrapper:
 		return {'error': "error, view logs"}
 
 	def set_resy_token(self, resy_token):
-		self.api_wrapper_logger.info("Set resy token")
 		self.resy_token = resy_token
 		self.session.headers.update({"x-resy-auth-token": resy_token})
 
@@ -83,8 +81,8 @@ class ResyApiWrapper:
 		resp = self.session.post(f"{self.base_url}/3/book", data=query_params)
 		return resp
 
-	def get_res_list(self, email):
-		self.api_wrapper_logger.info(f"Attempting to check reservation for {email}")
+	def get_res_list(self, uid):
+		self.api_wrapper_logger.info(f"Attempting to check reservation for {uid}")
 		return self.session.get(f"{self.base_url}/3/user/reservations")
 
 	def random_user_agent(self):

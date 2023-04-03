@@ -8,11 +8,11 @@ from google.cloud.firestore import Client as FirestoreClient
 
 
 class AccountHandler:
-	account_handler_logger = logging.getLogger(__name__)
 
-	def __init__(self, firebase_admin: FirebaseAdminApp, firestore_client: FirestoreClient):
+	def __init__(self, firebase_admin: FirebaseAdminApp, firestore_client: FirestoreClient, logger: logging.Logger):
 		self.firebase_auth = FirebaseAuthClient(firebase_admin)
 		self.firestore_client = firestore_client
+		self.account_handler_logger = logger
 
 	def create_new_user_account(self, user_registration: Dict):
 		try:
@@ -65,4 +65,15 @@ class AccountHandler:
 
 	def delete_reservation_request(self, uid, task_id):
 		self.firestore_client.collection(f"reservation_task_request/${uid}/tasks").document(task_id).delete()
+		return
+
+	def send_email(self, email, subject, body):
+		self.firestore_client.collection("mail").add({
+			"from": "Resy Bot <noreply@rip-resy.firebaseapp.com>",
+			"to": email,
+			"message": {
+				"subject": subject,
+				"html": body
+			}
+		})
 		return
