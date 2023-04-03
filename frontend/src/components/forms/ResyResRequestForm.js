@@ -19,6 +19,7 @@ function ResyResRequestForm(){
   const today = new Date(Date.now() + 24 * 60 * 60 * 1000)
   const [open, setOpen] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorDialogMessage, setErrorDialogMessage] = useState('');
   const [partySize, setPartySize] = useState(1);
   const {venue, id} = useSelector((state) => state.venue);
   const { user, firebaseUID } = useSelector((state) => state.auth);
@@ -53,8 +54,9 @@ function ResyResRequestForm(){
     setPartySize(parseInt(e.target.value));
   }
 
-  const handleErrorDialogOpen = () => {
+  const handleErrorDialogOpen = (msg) => {
     setErrorDialogOpen(true);
+    setErrorDialogMessage(msg);
   }
 
   const onSubmit = async (data) => {
@@ -75,9 +77,16 @@ function ResyResRequestForm(){
     });
     
     console.log(`attempting to create a reservation request for ${user.email} at ${venue} on ${data.reservationDate} at ${data.resTimes} for ${data.partySize} people`);
-    console.log(data);
-    await requestReservationTask(data);
-    navigate(`/user/${firebaseUID}`);
+    await requestReservationTask(data)
+      .then(() => navigate(`/user/${firebaseUID}`))
+      .catch((err) => {
+        let error_message = err.response.data['detail'];
+        let error_message_string = '';
+        for (const [key, value] of Object.entries(error_message)) {
+          error_message_string += `${key.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}: ${value} \n`;
+        }
+        handleErrorDialogOpen(error_message_string);
+      });
   }
   
 
@@ -126,13 +135,13 @@ function ResyResRequestForm(){
                   return (
                     <li key={item.id}>
                       <HookTimePicker {...registerState(`resTimes.${index}.resTime`)} rules={{required: true}} timePickerProps={{autoComplete: "time", autoFocus: true, margin: "normal", fullWidth: true, label: "Reservation Time"}} gridProps={{xs: 15}} />
-                      <Button onClick={() => fields.length > 1 ? remove(index) : handleErrorDialogOpen()}>Remove</Button>
+                      <Button onClick={() => fields.length > 1 ? remove(index) : handleErrorDialogOpen("Please have at least one timeslot selected for this reservation")}>Remove</Button>
                     </li>
                   );
                 })
               }
             </ol>
-            <ErrorDialog open={errorDialogOpen} setOpen={setErrorDialogOpen} dialogTitle={"Timeslot error"} dialogContent={"Please have at least one timeslot selected for this reservation"} />
+            <ErrorDialog open={errorDialogOpen} setOpen={setErrorDialogOpen} dialogTitle={"Reservation Request form error"} dialogContent={errorDialogMessage} />
           </Grid>
           { fields.length < 5 ? <Button onClick={addTimeSelection}>Add Time</Button> : null}
         </Grid>
