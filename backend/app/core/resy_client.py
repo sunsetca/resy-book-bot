@@ -11,10 +11,23 @@ from . import ResyApiWrapper
 
 class ResyClient:
 	find_venue_keys = {'lat', 'long', 'day', 'party_size', 'venue_id'}
-	resy_client_logger = logging.getLogger(__name__)
 
-	def __init__(self, resy_api: ResyApiWrapper):
+	def __init__(self, resy_api: ResyApiWrapper, logger: logging.Logger):
 		self.resy_api = resy_api
+		self.resy_client_logger = logger
+
+	def auth_check(self, payload: Dict) -> Response:
+		self.resy_api.set_resy_token(payload['token'])
+		try:
+			res_list = self.get_res_list(payload['uid'])
+			if res_list.status_code == 200:
+				return Response(status=200)
+			else:
+				self.resy_client_logger.info(f"Failed user auth, recieved status code {res_list.status_code}")
+				return Response(status=401)
+		except Exception as e:
+			self.resy_client_logger.error(f"Error occurred while checking user auth: {e}")
+			return Response(status=500)
 
 	def book_res(self, payload: Dict) -> Response:
 		self.resy_api.set_resy_token(payload['token'])
@@ -36,7 +49,7 @@ class ResyClient:
 			book_token = details_resp['book_token']['value']
 			payment_id = details_resp['user']['payment_methods'][0]['id']
 			booking_resp = self.resy_api.create_reservation(payment_id, book_token).json()
-			res_list = self.get_res_list(payload['email'])
+			res_list = self.get_res_list(payload['uid']).json()
 			confirmed_reservation = any(booking_resp['reservation_id'] == res['reservation_id'] for res in res_list['reservations'])
 
 		except BaseException as e:
@@ -44,8 +57,8 @@ class ResyClient:
 			self.resy_client_logger.error("Unable to book {error}".format(error=excpetion_traceback))
 			return Response(response=str(excpetion_traceback), status=500)
 
-		self.resy_client_logger.info("Reservation status of booking for {email} at {venue} is {res_status}"
-		                             .format(email=payload['email'], venue=payload['venue_id'],
+		self.resy_client_logger.info("Reservation status of booking for {uid} at {venue} is {res_status}"
+		                             .format(uid=payload['uid'], venue=payload['venue_id'],
 		                                     res_status=confirmed_reservation))
 
 		return Response(response="Booked reservation", status=200)
@@ -74,8 +87,8 @@ class ResyClient:
 			timeout=20
 		)
 
-	def find_venue(self, email, query):
-		self.resy_client_logger.info(f"Attempting to search for available restaurants for: {email}")
+	def find_venue(self, uid, query):
+		self.resy_client_logger.info(f"Attempting to search for available restaurants for: {uid}")
 		result = self.resy_api.find_venue(query)
 		if result.status_code == 200:
 			json_resp = result.json()
@@ -91,7 +104,7 @@ class ResyClient:
 
 					if (round(query.get('lat'), 3) == round(result_lat, 3)) and (round(query.get('long'), 3) == round(result_long, 3)):
 						batched_results['primary'] = {'id': id, 'name': restaurant, 'neighborhood': neighborhood}
-						self.resy_client_logger.info(f"Found restaurant: {restaurant} for {email}")
+						self.resy_client_logger.info(f"Found restaurant: {restaurant} for {uid}")
 			return batched_results
 		else:
 			self.resy_client_logger.error(f"Resy response error {result.status_code}, {result.text}")
@@ -115,8 +128,8 @@ class ResyClient:
 			self.resy_client_logger.error(f"Resy response error {result.status_code}, {result.text}")
 			return None
 
-	def get_res_list(self, email):
-		return self.resy_api.get_res_list(email).json()
+	def get_res_list(self, uid):
+		return self.resy_api.get_res_list(uid)
 	
 	def set_token(self, token):
 		self.resy_api.set_resy_token(token)

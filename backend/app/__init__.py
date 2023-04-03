@@ -1,5 +1,7 @@
 import firebase_admin
 import google.auth
+import logging
+from logging.config import dictConfig
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
@@ -20,12 +22,29 @@ from .core.account_handler import AccountHandler
 from .core.task_handler import TaskHandler
 from .core.resy_client import ResyClient
 
-account_handler = AccountHandler(firebase_admin, firestore_client)
-resy_wrapper = ResyApiWrapper(os.environ['RESY_URL'], os.environ['RESY_API_KEY'])
-task_handler = TaskHandler(project, os.environ['LOCATION'], os.environ['QUEUE'])
-resy_client = ResyClient(resy_wrapper)
-csrf = CSRFProtect()
+dictConfig({
+		'version': 1,
+		'formatters': {'default': {
+			'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+		}},
+		'handlers': {'wsgi': {
+			'class': 'logging.StreamHandler',
+			'stream': 'ext://flask.logging.wsgi_errors_stream',
+			'formatter': 'default'
+		}},
+		'root': {
+			'level': 'INFO',
+			'handlers': ['wsgi']
+		}
+	})
 
+logger = logging.getLogger(__name__)
+
+account_handler = AccountHandler(firebase_admin, firestore_client, logger.getChild("account_handler"))
+resy_wrapper = ResyApiWrapper(os.environ['RESY_URL'], os.environ['RESY_API_KEY'], logger.getChild("resy_wrapper"))
+task_handler = TaskHandler(project, os.environ['LOCATION'], os.environ['QUEUE'], logger.getChild("task_handler"))
+resy_client = ResyClient(resy_wrapper, logger.getChild("resy_client"))
+csrf = CSRFProtect()
 
 def create_app() -> Flask:
 	app = Flask(__name__, instance_relative_config=True, static_folder='build/static', template_folder='build')

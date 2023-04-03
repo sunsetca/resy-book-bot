@@ -40,7 +40,7 @@ const VenueRequestForm = (props) => {
     
     const onClick = async () => {
         let activeResyToken = resyToken || await getResyToken(firebaseUID);
-        let resp = await searchVenue({lon: lon, lat: lat, email: user.email, resyToken: (activeResyToken || activeResyToken._token), partySize: props.partySize});
+        let resp = await searchVenue({lon: lon, lat: lat, uid: firebaseUID, resyToken: (activeResyToken || activeResyToken._token), partySize: props.partySize});
         let { search, primary } = resp.data;
         dispatch(saveVenue(primary.name))
         dispatch(saveVenueId(primary.id))
