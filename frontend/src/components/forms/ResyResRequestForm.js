@@ -13,14 +13,16 @@ import { useNavigate } from 'react-router-dom';
 import { requestReservationTask } from '../../backend';
 import { useState, useEffect } from 'react';
 import VenueRequestForm from './VenueSearchForm';
+import ErrorDialog from '../ErrorDialog';
 
 function ResyResRequestForm(){
   const today = new Date(Date.now() + 24 * 60 * 60 * 1000)
   const [open, setOpen] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [partySize, setPartySize] = useState(1);
   const {venue, id} = useSelector((state) => state.venue);
   const { user, firebaseUID } = useSelector((state) => state.auth);
-  const defaultValues = {resLiveDate: today, resDay: today, partySize: partySize.toString(), resTimes: []};
+  const defaultValues = {resLiveDate: today, resDay: today, partySize: partySize.toString(), resTimes: [{resTime: subHours(today, today.getTimezoneOffset() / 60)}]};
   const { registerState, control, handleSubmit } = useHookForm({ defaultValues, });
   const navigate = useNavigate();
   const { fields, append, remove }  = useFieldArray({
@@ -51,8 +53,11 @@ function ResyResRequestForm(){
     setPartySize(parseInt(e.target.value));
   }
 
+  const handleErrorDialogOpen = () => {
+    setErrorDialogOpen(true);
+  }
+
   const onSubmit = async (data) => {
-    let email = user.email;
     data.resLiveDate = data.resLiveDate.toISOString().slice(0, 19).replace('T', ' ');
     data.resDay = data.resDay.toISOString().slice(0, 10);
     data.venue_id = id;
@@ -69,7 +74,7 @@ function ResyResRequestForm(){
       return `${adjustedDate.toISOString().slice(11, 19)}${timezoneOffsetString}`;
     });
     
-    console.log(`attempting to create a reservation request for ${email} at ${venue} on ${data.reservationDate} at ${data.resTimes} for ${data.partySize} people`);
+    console.log(`attempting to create a reservation request for ${user.email} at ${venue} on ${data.reservationDate} at ${data.resTimes} for ${data.partySize} people`);
     console.log(data);
     await requestReservationTask(data);
     navigate(`/user/${firebaseUID}`);
@@ -121,13 +126,13 @@ function ResyResRequestForm(){
                   return (
                     <li key={item.id}>
                       <HookTimePicker {...registerState(`resTimes.${index}.resTime`)} rules={{required: true}} timePickerProps={{autoComplete: "time", autoFocus: true, margin: "normal", fullWidth: true, label: "Reservation Time"}} gridProps={{xs: 15}} />
-                      <Button onClick={() => remove(index)}>Remove</Button>
+                      <Button onClick={() => fields.length > 1 ? remove(index) : handleErrorDialogOpen()}>Remove</Button>
                     </li>
                   );
                 })
               }
             </ol>
-            
+            <ErrorDialog open={errorDialogOpen} setOpen={setErrorDialogOpen} dialogTitle={"Timeslot error"} dialogContent={"Please have at least one timeslot selected for this reservation"} />
           </Grid>
           { fields.length < 5 ? <Button onClick={addTimeSelection}>Add Time</Button> : null}
         </Grid>
