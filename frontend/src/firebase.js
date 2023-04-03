@@ -32,12 +32,11 @@ const auth = getAuth(app);
 const firestore = getFirestore(app);
 
 const registerEmailPassword = async (email, password, displayName, phoneNumber) => {
-    console.log(firebaseConfig);
     try {
         const userCreds = await createUserWithEmailAndPassword(auth, email, password);
         await sendEmailVerification(auth.currentUser);
         await updateProfile(auth.currentUser, { displayName: displayName, phoneNumber: phoneNumber });
-        return userCreds.user;
+        return {user: userCreds.user, firebaseUID: userCreds.user.uid};
     } catch (error) {
         console.log(`${error.code}:${error.message}`);
     }
@@ -46,8 +45,7 @@ const registerEmailPassword = async (email, password, displayName, phoneNumber) 
 const signInEmailPw = async (email, password) => {
     try {
         const userCreds = await signInWithEmailAndPassword(auth, email, password);
-        let userFirebaseSession = await userCreds.user.getIdToken();
-        return {user: userCreds.user, firebaseToken: userFirebaseSession}
+        return {user: userCreds.user, firebaseToken: userCreds.user.uid}
     } catch (error) {
         console.log(`${error.code}:${error.message}`);
     }
@@ -63,8 +61,7 @@ const processSignInWithGoogle = async () => {
         .then(async (result) => {
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const user = result.user;
-            let userFirebaseSession = await user.getIdToken();
-            return {user: user, firebaseToken: userFirebaseSession}
+            return {user: user, firebaseToken: user.uid}
         }).catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -77,8 +74,7 @@ const processSignInWithGoogle = async () => {
 const isLoggedIn = async () => {
     return await onAuthStateChanged(auth, async (user) => {
         if (user) {
-            let userFirebaseSession = await user.getIdToken();
-            return {user: user, firebaseToken: userFirebaseSession};
+            return {user: user, firebaseToken: user.uid};
         } else {
             return {user: null, firebaseToken: null};
         }
