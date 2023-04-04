@@ -9,10 +9,15 @@ export function useAuth() {
   const checkAuthAndNavigate = useCallback((path) => {
     if (!user) {
       navigate('/login');
-    } else {
-      navigate(path);
     }
+    navigate(path);
   }, [user, navigate]);
 
-  return { firebaseUID, user, checkAuthAndNavigate };
+  const redirectToProfileIfAuth = useCallback(() => {
+    if (user) {
+      navigate(`/user/${firebaseUID}`);
+    }
+  }, [user, firebaseUID, navigate]);
+
+  return { firebaseUID, user, checkAuthAndNavigate, redirectToProfileIfAuth };
 }

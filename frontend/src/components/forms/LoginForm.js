@@ -18,13 +18,13 @@ import { useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 
 const LoginWithOtherProviders = (props) => {
-  const { firebaseUID, checkAuthAndNavigate } = useAuth();
+  const { firebaseUID, redirectToProfileIfAuth } = useAuth();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkAuthAndNavigate(`/user/${firebaseUID}`);
-  }, [firebaseUID, checkAuthAndNavigate]);
+    redirectToProfileIfAuth();
+  }, [firebaseUID, redirectToProfileIfAuth]);
 
   const thirdPartySignIn = async () => {
     await signInWithGoogle().then((resp) => {
@@ -45,20 +45,20 @@ const LoginWithOtherProviders = (props) => {
 };
 
 function Login() {
-  const { firebaseUID, checkAuthAndNavigate } = useAuth();
+  const { firebaseUID, redirectToProfileIfAuth } = useAuth();
   const defaultValues = { email: '', password: '', remember: false};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkAuthAndNavigate(`/user/${firebaseUID}`);
-  }, [firebaseUID, checkAuthAndNavigate]);
+    redirectToProfileIfAuth();
+  }, [firebaseUID, redirectToProfileIfAuth]);
 
   const onSubmit = async (data) => {
     let remember = data.remember;
     await signInEmailPw(data.email, data.password).then((resp) => {
-      const {displayName, email, uid} = resp.user;
+      const {displayName, email, uid} = resp;
       dispatch(saveUser({displayName, email}));
       dispatch(saveFirebaseUID(uid));
       dispatch(saveRememberChoice(remember));
