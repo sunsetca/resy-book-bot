@@ -1,5 +1,4 @@
 import json
-import os
 from flask import Blueprint, request, Response
 
 from app import account_handler, task_handler, resy_client, logger, bot_domain
