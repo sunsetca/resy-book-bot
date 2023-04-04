@@ -2,27 +2,20 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { registerEmailPassword } from '../../firebase';
 import { HookTextField, useHookForm } from 'mui-react-hook-form-plus';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import { useEffect } from 'react';
 import { saveUser, saveFirebaseUID } from '../../redux/authSlice';
 
 const RegistrationForm = () => {
-  const {user, firebaseUID} = useSelector((state) => state.auth);
   const defaultValues = { email: '', password: '', firstName: '', phoneNumber: ''};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (user) {
-      navigate(`/user/${firebaseUID}`);
-    }
-  }, [user, firebaseUID]);
-
   const onSubmit = async (data) => {
     let {user, firebaseUID} = await registerEmailPassword(data.email, data.password, data.firstName, data.phoneNumber);
-    dispatch(saveUser(user));
+    const { displayName, email } = user;
+    dispatch(saveUser({displayName, email}));
     dispatch(saveFirebaseUID(firebaseUID));
     navigate(`/user/${firebaseUID}`);
   };

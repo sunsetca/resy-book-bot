@@ -1,5 +1,12 @@
 import axios from 'axios';
 
+async function createBugReport(formData) {
+  let payload = createFormPayload(formData);
+  let response = await axios.post('/meta-api/create-issue', payload);
+
+  return response;
+}
+
 async function getUserProfile(params) {
   let request_url = `/user/user-profile?` + (new URLSearchParams(params).toString());
   let userProfile = await axios.get(request_url);
@@ -72,6 +79,7 @@ function createFormPayload(formData) {
 
 export {
     authorizeResyToken,
+    createBugReport,
     getUserProfile,
     requestReservationTask,
     searchVenue,

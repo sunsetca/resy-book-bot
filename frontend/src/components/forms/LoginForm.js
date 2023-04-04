@@ -6,9 +6,8 @@ import {
   HookCheckBox, 
   HookTextField, 
   useHookForm } from 'mui-react-hook-form-plus';
-import { useDispatch, useSelector } from 'react-redux';
-import { saveRememberChoice } from '../../redux/authSlice';
-
+import { useDispatch} from 'react-redux';
+import { saveFirebaseUID, saveRememberChoice, saveUser } from '../../redux/authSlice';
 import {
   signInEmailPw, 
   signInWithGoogle, 
@@ -16,19 +15,26 @@ import {
 import GoogleLogo from '../../img/google_logo.png';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useAuth } from '../../hooks/useAuth';
 
 const LoginWithOtherProviders = (props) => {
-  const {user, firebaseUID} = useSelector((state) => state.auth);
+  const { firebaseUID, checkAuthAndNavigate } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      navigate(`/user/${firebaseUID}`);
-    }
-  }, [user, firebaseUID]);
+    checkAuthAndNavigate(`/user/${firebaseUID}`);
+  }, [firebaseUID, checkAuthAndNavigate]);
 
   const thirdPartySignIn = async () => {
-    await signInWithGoogle();
+    await signInWithGoogle().then((resp) => {
+      const {displayName, email, uid} = resp.user;
+      dispatch(saveUser({displayName, email}));
+      dispatch(saveFirebaseUID(uid));
+      navigate(`/user/${uid}}`);
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 
   return (
@@ -39,23 +45,27 @@ const LoginWithOtherProviders = (props) => {
 };
 
 function Login() {
-  const {user, firebaseUID} = useSelector((state) => state.auth);
+  const { firebaseUID, checkAuthAndNavigate } = useAuth();
   const defaultValues = { email: '', password: '', remember: false};
   const { registerState, handleSubmit } = useHookForm({ defaultValues, });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      navigate(`/user/${firebaseUID}`);
-    }
-  }, [user, firebaseUID, navigate]);
-
+    checkAuthAndNavigate(`/user/${firebaseUID}`);
+  }, [firebaseUID, checkAuthAndNavigate]);
 
   const onSubmit = async (data) => {
     let remember = data.remember;
-    await signInEmailPw(data.email, data.password);
-    dispatch(saveRememberChoice(remember));
+    await signInEmailPw(data.email, data.password).then((resp) => {
+      const {displayName, email, uid} = resp.user;
+      dispatch(saveUser({displayName, email}));
+      dispatch(saveFirebaseUID(uid));
+      dispatch(saveRememberChoice(remember));
+      navigate(`/user/${uid}}`);
+    }).catch((error) => {
+      console.log(error);
+    });
   };
 
   

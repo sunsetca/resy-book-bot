@@ -1,4 +1,3 @@
-
 import ErrorPage from './components/ErrorPage';
 import {
   createBrowserRouter,
@@ -11,7 +10,9 @@ import {
   WrappedResyTokenForm, 
   WrappedResyResRequestForm,
   WrappedPasswordResetForm,
-  WrappedRegisterVenueForm} from './components/forms/FormContainer';
+  WrappedRegisterVenueForm,
+  WrappedBugReportForm
+} from './components/forms/FormContainer';
 import Profile from './components/user/Profile';
 import Home from './components/Home';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -19,7 +20,7 @@ import { defaultTheme } from './defaultTheme';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { auth, getResyToken } from './firebase';
-import { saveFirebaseUID, saveUser, saveResyToken } from './redux/authSlice';
+import { saveFirebaseUID, saveUser, saveResyToken, setLoading } from './redux/authSlice';
 
 
 const theme = createTheme(defaultTheme);
@@ -45,6 +46,11 @@ const router = createBrowserRouter([
       {
         path: "register/",
         element: <WrappedRegistrationForm/>
+      },
+      {
+        path: "report-a-bug/",
+        element: <WrappedBugReportForm/>,
+        errorElement: <ErrorPage/>
       },
       {
         path: "user/:userId/",
@@ -75,21 +81,25 @@ function App() {
   const dispatch = useDispatch();
   
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const {displayName, email, uid} = user;
-        let resyToken = await getResyToken(uid);
-        dispatch(saveUser({displayName, email}));
-        dispatch(saveFirebaseUID(uid));
-        dispatch(saveResyToken(resyToken));
-      } else {
-        dispatch(saveUser(null));
-        dispatch(saveFirebaseUID(null));
-        dispatch(saveResyToken(null));
-      }
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      (async () => {
+        if (user) {
+          const { displayName, email, uid } = user;
+          let resyToken = await getResyToken(uid);
+          dispatch(saveUser({ displayName, email }));
+          dispatch(saveFirebaseUID(uid));
+          dispatch(saveResyToken(resyToken));
+        } else {
+          dispatch(saveUser(null));
+          dispatch(saveFirebaseUID(null));
+          dispatch(saveResyToken(null));
+        }
+        dispatch(setLoading(false));
+      })();
     });
     return unsubscribe;
   }, [dispatch]);
+  
 
   return (
     <ThemeProvider theme={theme}>

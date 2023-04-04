@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { logout } from '../firebase';
 import { useDispatch } from 'react-redux';
@@ -9,12 +9,14 @@ import { saveUser, saveFirebaseUID, saveResyToken } from '../redux/authSlice';
 const Navbar = () => {
   const { user, firebaseUID } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   
   const logoutCurrentUser = async () => {
     await logout();
     dispatch(saveUser(null));
     dispatch(saveFirebaseUID(null));
     dispatch(saveResyToken(null));
+    navigate('/');
   }
 
   return (

@@ -1,18 +1,21 @@
 import { initializeApp } from "firebase/app";
-import { doc, getDoc, getFirestore } from "firebase/firestore";
-
-import { 
-    getAuth, 
-    getRedirectResult, 
-    createUserWithEmailAndPassword, 
-    sendEmailVerification,
-    signInWithEmailAndPassword, 
-    signInWithRedirect, 
-    signOut, 
-    updateProfile,
-    GoogleAuthProvider, 
-    onAuthStateChanged,
-    sendPasswordResetEmail
+import {
+  getFirestore,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import {
+  getAuth,
+  getRedirectResult,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  signInWithRedirect,
+  signOut,
+  updateProfile,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -21,12 +24,11 @@ const firebaseConfig = {
   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
   storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_FIREBASE_MSG_SNDR_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 const provider = new GoogleAuthProvider();
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
@@ -45,7 +47,7 @@ const registerEmailPassword = async (email, password, displayName, phoneNumber) 
 const signInEmailPw = async (email, password) => {
     try {
         const userCreds = await signInWithEmailAndPassword(auth, email, password);
-        return {user: userCreds.user, firebaseToken: userCreds.user.uid}
+        return userCreds.user
     } catch (error) {
         console.log(`${error.code}:${error.message}`);
     }
@@ -61,7 +63,7 @@ const processSignInWithGoogle = async () => {
         .then(async (result) => {
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const user = result.user;
-            return {user: user, firebaseToken: user.uid}
+            return {user: user, firebaseUID: user.uid}
         }).catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -74,22 +76,22 @@ const processSignInWithGoogle = async () => {
 const isLoggedIn = async () => {
     return await onAuthStateChanged(auth, async (user) => {
         if (user) {
-            return {user: user, firebaseToken: user.uid};
+            return {user: user, firebaseUID: user.uid};
         } else {
-            return {user: null, firebaseToken: null};
+            return {user: null, firebaseUID: null};
         }
     })
 }
 
 const logout = async () => {
-    await signOut(auth).then(() => {}).catch((error) => {
+    return await signOut(auth).then(() => {}).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
     });
 }
 
 const resetPassword = async (email) => {
-    await sendPasswordResetEmail(auth, email).then(() => {}).catch((error) => {
+    return await sendPasswordResetEmail(auth, email).then(() => {}).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
     });

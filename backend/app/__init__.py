@@ -1,5 +1,6 @@
 import firebase_admin
 import google.auth
+import google.cloud.logging
 import logging
 from logging.config import dictConfig
 from dotenv import load_dotenv
@@ -15,12 +16,14 @@ import os
 credentials, project = google.auth.default()
 firebase_admin = firebase_admin.initialize_app(options={"projectId": project})
 firestore_client = FirestoreClient(project=project, credentials=credentials)
+g_logging_client = google.cloud.logging.Client()
 
 # internal app dependencies
 from .core.resy_api_wrapper import ResyApiWrapper
 from .core.account_handler import AccountHandler
 from .core.task_handler import TaskHandler
 from .core.resy_client import ResyClient
+from .core.github_client import GithubClient
 
 dictConfig({
 		'version': 1,
@@ -39,11 +42,13 @@ dictConfig({
 	})
 
 logger = logging.getLogger(__name__)
+g_logging_client.setup_logging()
 
 account_handler = AccountHandler(firebase_admin, firestore_client, logger.getChild("account_handler"))
 resy_wrapper = ResyApiWrapper(os.environ['RESY_URL'], os.environ['RESY_API_KEY'], logger.getChild("resy_wrapper"))
 task_handler = TaskHandler(project, os.environ['LOCATION'], os.environ['QUEUE'], logger.getChild("task_handler"))
 resy_client = ResyClient(resy_wrapper, logger.getChild("resy_client"))
+github_client = GithubClient(os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPO'], logger.getChild("github_client"))
 csrf = CSRFProtect()
 
 def create_app() -> Flask:
@@ -64,11 +69,12 @@ def create_app() -> Flask:
 		pass
 
 	with app.app_context():
-		from .routes import user, base, resy_interactions, bot
+		from .routes import user, base, resy_interactions, bot, meta
 
 		app.register_blueprint(user.user_bp)
 		app.register_blueprint(base.base_bp)
 		app.register_blueprint(resy_interactions.resy_bp)
 		app.register_blueprint(bot.resy_bot_bp)
+		app.register_blueprint(meta.meta_bp)
 
 	return app

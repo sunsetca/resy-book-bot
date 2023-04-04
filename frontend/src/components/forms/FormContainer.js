@@ -6,6 +6,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import LocationSearchingIcon from '@mui/icons-material/LocationSearching';
 import LinkIcon from '@mui/icons-material/Link';
+import BugIcon from '@mui/icons-material/BugReportOutlined';
 import { Divider } from '@mui/material';
 
 import Box from '@mui/material/Box';
@@ -18,8 +19,10 @@ import ResyTokenForm from './ResyTokenForm';
 import PasswordResetForm from './PasswordResetForm';
 import VenueRequestForm from './VenueSearchForm';
 import RegisterVenueForm from './RegisterVenueForm';
+import BugReportForm from './BugReportForm';
 import Login, { LoginWithOtherProviders } from './LoginForm';
 import { AuthTokenHowTo, VenueIdHowTo } from '../HowTo';
+import { ProtectedRoute } from '../ProtectedRoute';
 
 
 function FormContainer(props){
@@ -63,11 +66,13 @@ const WrappedRegistrationForm = () => {
 }
 
 const WrappedResyResRequestForm = () => {
-  return <FormContainer avatar={<LaptopChromebookOutlinedIcon/>} typography="Reservation Snipe Request" form={<ResyResRequestForm/>}/>
+  const ProtectedResyResRequestForm = ProtectedRoute(ResyResRequestForm);
+  return <FormContainer avatar={<LaptopChromebookOutlinedIcon/>} typography="Reservation Snipe Request" form={<ProtectedResyResRequestForm/>}/>
 }
 
 const WrappedResyTokenForm = () => {
-  return <FormContainer avatar={<KeyOutlinedIcon/>} typography="Register Resy Auth Token" form={<ResyTokenForm/>} leftChild={<AuthTokenHowTo/>}/>
+  const ProtectedResyTokenForm = ProtectedRoute(ResyTokenForm);
+  return <FormContainer avatar={<KeyOutlinedIcon/>} typography="Register Resy Auth Token" form={<ProtectedResyTokenForm/>} leftChild={<AuthTokenHowTo/>}/>
 }
 
 const WrappedSignInForm = () => {
@@ -79,14 +84,23 @@ const WrappedPasswordResetForm = () => {
 }
 
 const WrappedVenueSearchForm = () => {
-  return <FormContainer avatar={<LocationSearchingIcon/>} typography="Find venue" form={<VenueRequestForm/>}/>
+  const ProtectedVenueRequestForm = ProtectedRoute(VenueRequestForm);
+  return <FormContainer avatar={<LocationSearchingIcon/>} typography="Find venue" form={<ProtectedVenueRequestForm/>}/>
 }
 
 const WrappedRegisterVenueForm = () => {
-  return <FormContainer avatar={<LinkIcon/>} typography="Register venue" form={<RegisterVenueForm/>} leftChild={<VenueIdHowTo/>}/>
+  const ProtectedRegisterVenueForm = ProtectedRoute(RegisterVenueForm);
+  return <FormContainer avatar={<LinkIcon/>} typography="Register venue" form={<ProtectedRegisterVenueForm/>} leftChild={<VenueIdHowTo/>}/>
 }
 
+const WrappedBugReportForm = () => {
+  const ProtectedBugReportForm = ProtectedRoute(BugReportForm);
+  return <FormContainer avatar={<BugIcon />} typography="Report a bug" form={<ProtectedBugReportForm />} />;
+};
+
+
 export {
+  WrappedBugReportForm,
   WrappedRegistrationForm,
   WrappedResyResRequestForm,
   WrappedRegisterVenueForm,

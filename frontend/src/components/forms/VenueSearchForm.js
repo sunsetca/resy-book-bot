@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -11,7 +11,33 @@ import { saveLatLon, saveVenue, saveVenueId, saveNeighborhood, saveWebsite } fro
 import VenueSelectionDialog from '../VenueSelectionDialog';
 import { searchVenue } from '../../backend';
 import { getResyToken } from '../../firebase';
-import { useNavigate } from 'react-router-dom';
+
+
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+
+
+function VenueSearchModal({ open, handleClose, partySize }) {
+    return (
+        <Modal open={open} onClose={handleClose}>
+        <Box
+            sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+            }}
+        >
+            <VenueRequestForm parentModalClose={handleClose} partySize={partySize} />
+        </Box>
+        </Modal>
+    );
+}
 
 const VenueRequestForm = (props) => {
     const [isOpen, setOpen] = useState(false);
@@ -19,15 +45,9 @@ const VenueRequestForm = (props) => {
     const [isSearch, setSearch] = useState(false);
     const [searchOptions, setSearchOptions] = useState([]);
     const {lon, lat, venue, neighborhood, website} = useSelector((state) => state.venue);
-    const { user, firebaseUID, resyToken } = useSelector((state) => state.auth);
+    const { firebaseUID, resyToken } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!user) {
-            navigate('/login');
-        }
-    });
 
     const updateSelection = async (selection) => {
         await geocodeByPlaceId(selection.value.place_id).then(results => {
@@ -82,4 +102,4 @@ const VenueRequestForm = (props) => {
     )
 }
 
-export default VenueRequestForm;
+export default VenueSearchModal;

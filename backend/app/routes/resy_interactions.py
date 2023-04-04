@@ -68,7 +68,7 @@ def create_resy_task():
 		'task_type': 'reservation'
 		}
 		resp = task_handler.create_reservation_task(resy_task)
-		task_handler.create_auth_check_task({'uid': resy_watch_form.uid.data, 'resy_live_date': resy_watch_form.resLiveDate.data, 'task_type': 'check_auth'})
+		task_handler.create_auth_check_task({'uid': resy_watch_form.uid.data, 'res_live_date': resy_watch_form.resLiveDate.data, 'task_type': 'check_auth'})
 		return Response(response=resp.name, status=201)
 	else:
 		return Response(response=json.dumps({"reason": "invalid form submission", "detail": resy_watch_form.errors}), status=400)
