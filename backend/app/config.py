@@ -18,6 +18,7 @@ class Config(object):
 	GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
 	GITHUB_REPO = os.environ['GITHUB_REPO']
 	RESY_BOT_EMAIL = os.environ['RESY_BOT_EMAIL']
+	RESY_BOT_DOMAIN = os.environ['RESY_BOT_DOMAIN']
 
 
 class ProductionConfig(Config):

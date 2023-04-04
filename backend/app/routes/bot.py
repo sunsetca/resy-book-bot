@@ -2,7 +2,7 @@ import json
 import os
 from flask import Blueprint, request, Response
 
-from app import account_handler, task_handler, resy_client, logger
+from app import account_handler, task_handler, resy_client, logger, bot_domain
 
 resy_bot_bp = Blueprint('resy-bot', __name__, url_prefix='/resy-bot')
 bot_logger = logger.getChild("resy-bot-logger")
@@ -24,7 +24,7 @@ def execute():
 		An error occurred when trying to book your reservation, the request limit has been reached. 
 		This may occur if the Auth Token attached to the account has been changed by Resy, you do not have a payment method attached to your Resy account, or the reservation is no longer avaialable.
 		<br>
-		You can check if your Auth Token is still valid <a href="https://{os.environ['RESY_BOT_DOMAIN']}/user/{resy_active_res_task['uid']}/check-token">here</a>.
+		You can check if your Auth Token is still valid <a href="https://{bot_domain}/user/{resy_active_res_task['uid']}/check-token">here</a>.
 		<br>
 		You can check if you have a payment method attached to your Resy account <a href="https://resy.com/account/payment-methods">here</a>.
 		Please try requesting another reservation again later."""

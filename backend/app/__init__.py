@@ -39,6 +39,9 @@ resy_client = ResyClient(resy_wrapper, logger.getChild("resy_client"))
 github_client = GithubClient(os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPO'], logger.getChild("github_client"))
 csrf = CSRFProtect()
 
+# env variables for global use
+bot_domain = os.environ['RESY_BOT_DOMAIN']
+
 def create_app() -> Flask:
 	app = Flask(__name__, instance_relative_config=True, static_folder='build/static', template_folder='build')
 	active_env = os.environ['ACTIVE_ENV']
