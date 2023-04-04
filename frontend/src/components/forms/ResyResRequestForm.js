@@ -1,7 +1,5 @@
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
 import { HookDatePicker, HookDateTimePicker, HookSelect, HookTextField, HookTimePicker, useHookForm } from 'mui-react-hook-form-plus';
 import { useSelector } from 'react-redux';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -11,15 +9,14 @@ import { subHours } from 'date-fns';
 import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { requestReservationTask } from '../../backend';
-import { useState, useEffect } from 'react';
-import VenueRequestForm from './VenueSearchForm';
-import ErrorDialog from '../ErrorDialog';
+import { useState } from 'react';
+import VenueSearchModal from './VenueSearchForm';
+import { useErrorDialog, ErrorDialog } from '../ErrorDialog';
 
 function ResyResRequestForm(){
   const today = new Date(Date.now() + 24 * 60 * 60 * 1000)
   const [open, setOpen] = useState(false);
-  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
-  const [errorDialogMessage, setErrorDialogMessage] = useState('');
+  const { errorDialogOpen, errorDialogMessage, handleErrorDialogOpen, setErrorDialogOpen } = useErrorDialog();
   const [partySize, setPartySize] = useState(1);
   const {venue, id} = useSelector((state) => state.venue);
   const { user, firebaseUID } = useSelector((state) => state.auth);
@@ -29,12 +26,6 @@ function ResyResRequestForm(){
   const { fields, append, remove }  = useFieldArray({
     control,
     name: "resTimes"
-  });
-
-  useEffect(() => {
-    if (!user) {
-        navigate('/login');
-    }
   });
   
   const partySizeOptions = Array.from(Array(8).keys()).map((i) => {return {label: (i + 1).toString(), value: (i + 1).toString()}});
@@ -54,10 +45,6 @@ function ResyResRequestForm(){
     setPartySize(parseInt(e.target.value));
   }
 
-  const handleErrorDialogOpen = (msg) => {
-    setErrorDialogOpen(true);
-    setErrorDialogMessage(msg);
-  }
 
   const onSubmit = async (data) => {
     data.resLiveDate = data.resLiveDate.toISOString().slice(0, 19).replace('T', ' ');
@@ -111,22 +98,7 @@ function ResyResRequestForm(){
             <Button onClick={handleOpen}>Change venue</Button>
             
           </Grid>
-          <Modal open={open} onClose={handleClose} >
-              <Box sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-          }}>
-                <VenueRequestForm parentModalClose={handleClose} partySize={partySize}/>
-              </Box>
-
-            </Modal>
+          <VenueSearchModal open={open} handleClose={handleClose} partySize={partySize} />
           <Grid item xs={12}>
             <Typography variant="h6">Reservation Times in priority order</Typography>
             <ol name="res_times">

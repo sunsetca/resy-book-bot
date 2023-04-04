@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    loading: false,
+    loading: true,
     user: null,
     firebaseUID: null,
     resyToken: null,
@@ -24,11 +24,14 @@ const authSlice = createSlice({
         },
         saveResyToken(state, action) {
             state.resyToken = action.payload;
+        },
+        setLoading(state, action) {
+            state.loading = action.payload;
         }
     }
 });
 
 
 
-export const { saveUser, saveFirebaseUID, saveRememberChoice, saveResyToken } = authSlice.actions;
+export const { saveUser, saveFirebaseUID, saveRememberChoice, saveResyToken, setLoading } = authSlice.actions;
 export default authSlice.reducer;

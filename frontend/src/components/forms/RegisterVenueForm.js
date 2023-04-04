@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import { useHookForm, HookTextField } from 'mui-react-hook-form-plus';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import { saveLatLon, saveVenueId, saveVenue, saveNeighborhood, saveWebsite } from '../../redux/venueSlice';
 import { getVenueDetails } from '../../backend';
 
@@ -11,15 +10,9 @@ import { getVenueDetails } from '../../backend';
 function RegisterVenueForm(){
     const defaultValues = { venue: ''};
     const { registerState, handleSubmit } = useHookForm({ defaultValues, });
-    const {user, firebaseUID, resyToken} = useSelector((state) => state.auth);
+    const {firebaseUID, resyToken} = useSelector((state) => state.auth);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (!user) {
-        navigate(`/`);
-        }
-    }, [user]);
 
     const onSubmit = async (data) => {
         console.log(data);

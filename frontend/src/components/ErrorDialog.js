@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -6,7 +7,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 function ErrorDialog(props) {
-
   const handleClose = () => {
     props.setOpen(false);
   };
@@ -35,5 +35,20 @@ function ErrorDialog(props) {
   );
 }
 
-export default ErrorDialog;
 
+function useErrorDialog() {
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorDialogMessage, setErrorDialogMessage] = useState('');
+
+  const handleErrorDialogOpen = (msg) => {
+    setErrorDialogOpen(true);
+    setErrorDialogMessage(msg);
+  };
+
+  return { errorDialogOpen, errorDialogMessage, handleErrorDialogOpen, setErrorDialogOpen };
+}
+
+export {
+  ErrorDialog,
+  useErrorDialog
+};

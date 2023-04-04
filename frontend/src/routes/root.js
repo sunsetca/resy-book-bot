@@ -16,12 +16,21 @@ function Copyright(props) {
     );
   }
 
+function BugReportLink(){
+  return (
+    <Typography variant="body2" color="text.secondary" align="center" xs={{margin: 4}}>
+      <Link color="inherit" href="/report-a-bug"> Report a bug </Link>
+    </Typography>
+  )
+}
+
 export default function Root(){
 
     return (
         <>
           <Navbar/>
           <Outlet/>
+          <BugReportLink/>
           <Copyright/>
         </>
     );

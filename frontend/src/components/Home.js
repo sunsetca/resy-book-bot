@@ -1,21 +1,21 @@
 import { Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
-const Home = () => {
-    const {user, firebaseUID} = useSelector((state) => state.auth);
+function Home(){
+    const { firebaseUID } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user) {
+        if (firebaseUID) {
             navigate(`/user/${firebaseUID}`);
         }
-    }, [user, firebaseUID, navigate]);
-    
+    }, [firebaseUID]);
+
     return (
         <Container component="main" maxWidth="xs">
             <Box

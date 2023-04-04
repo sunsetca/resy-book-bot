@@ -1,7 +1,6 @@
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { Link } from 'react-router-dom';
 import {getUserProfile} from '../../backend';
-import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Avatar, Box, Button, Container, Divider, Typography, Table, TableContainer, TableHead, TableCell, TableRow, TableBody } from "@mui/material";
@@ -19,14 +18,7 @@ const Profile = () => {
     const [userData, setUserData] = useState(null);
     const [fetched, setFetched] = useState(false);
     const {user, firebaseUID} = useSelector((state) => state.auth);
-    const navigate = useNavigate();
     let resyAction;
-
-    useEffect(() => {
-        if (!user) {
-            navigate('/login');
-        }
-    });
 
     useEffect(() => {
         if (user && !fetched) {

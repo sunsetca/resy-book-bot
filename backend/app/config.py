@@ -15,6 +15,8 @@ class Config(object):
 	RESY_API_KEY = os.environ['RESY_API_KEY']
 	LOCATION = os.environ['LOCATION']
 	QUEUE = os.environ['QUEUE']
+	GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
+	GITHUB_REPO = os.environ['GITHUB_REPO']
 
 
 class ProductionConfig(Config):
