@@ -65,11 +65,14 @@ class AccountHandler:
 		return True if self.get_resy_token(user_id) else False
 
 	def delete_reservation_request(self, uid, task_id):
-		self.firestore_client.collection(f"reservation_task_request/${uid}/tasks").document(task_id).delete()
+		try:
+			self.firestore_client.collection(f"reservation_task_request/${uid}/tasks").document(task_id).delete()
+		except Exception as e:
+			self.account_handler_logger.error(f"Error deleting reservation request, it may have already been deleted: {e}")
 		return
 
 	def send_email(self, email, subject, body):
-		self.account_handler_logger.info(f"Sending email related to {subject}")
+		self.account_handler_logger.info(f"Sending email related to user about: {subject}")
 		self.firestore_client.collection("mail").add({
 			"from": f"Resy Bot <{self.bot_email}>",
 			"to": email,
