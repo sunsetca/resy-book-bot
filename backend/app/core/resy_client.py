@@ -85,7 +85,7 @@ class ResyClient:
 			lambda: self.resy_api.find_venue(venue_query),
 			check_success=lambda resp: len(resp.json()['results']['venues'][0]['slots']) > 0,
 			step=retry_interval_ms,
-			timeout=20
+			timeout=10
 		)
 
 	def find_venue(self, uid, query):
