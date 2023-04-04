@@ -1,5 +1,6 @@
 import firebase_admin
 import google.auth
+import google.cloud.logging
 import logging
 from logging.config import dictConfig
 from dotenv import load_dotenv
@@ -15,6 +16,7 @@ import os
 credentials, project = google.auth.default()
 firebase_admin = firebase_admin.initialize_app(options={"projectId": project})
 firestore_client = FirestoreClient(project=project, credentials=credentials)
+g_logging_client = google.cloud.logging.Client()
 
 # internal app dependencies
 from .core.resy_api_wrapper import ResyApiWrapper
@@ -40,6 +42,7 @@ dictConfig({
 	})
 
 logger = logging.getLogger(__name__)
+g_logging_client.setup_logging()
 
 account_handler = AccountHandler(firebase_admin, firestore_client, logger.getChild("account_handler"))
 resy_wrapper = ResyApiWrapper(os.environ['RESY_URL'], os.environ['RESY_API_KEY'], logger.getChild("resy_wrapper"))
