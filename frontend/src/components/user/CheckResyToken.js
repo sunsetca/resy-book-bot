@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { checkUserResyToken} from '../../backend.js';
+import { ProtectedRoute } from '../ProtectedRoute';
 
 async function loader({ params }) {
     const tokenData = await checkUserResyToken({
@@ -66,4 +67,5 @@ function CheckResyToken(){
         </Container>)
 }
 
-export default CheckResyToken;
+CheckResyToken.loader = loader;
+export default ProtectedRoute(CheckResyToken);

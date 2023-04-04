@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Avatar, Box, Button, Container, Divider, Typography, Table, TableContainer, TableHead, TableCell, TableRow, TableBody } from "@mui/material";
 import { Paper } from "@mui/material";
+import { ProtectedRoute } from '../ProtectedRoute';
 
 async function loader({ params }) {
     const userData = await getUserProfile({
@@ -36,7 +37,10 @@ function Profile(){
     }
 
     if (userData && userData.activeToken){
-        resyAction = <Button xs={{marginTop: 2, marginBottom: 2}}><Link to={`resy-res-request`}>Create Reservation Task Request</Link></Button>;
+        resyAction = <>
+        <Button xs={{marginTop: 2, marginBottom: 0}}><Link to={`check-token`}>Check Resy Auth Token Status</Link></Button>
+        <Button xs={{marginTop: 2, marginBottom: 2}}><Link to={`resy-res-request`}>Create Reservation Task Request</Link></Button>
+        </>
     } else {
         resyAction = <Button><Link to={`resy-auth`}>Register Resy Auth</Link></Button>;
     }
@@ -93,4 +97,4 @@ function Profile(){
 };
 Profile.loader = loader;
 
-export default Profile;
+export default ProtectedRoute(Profile);
