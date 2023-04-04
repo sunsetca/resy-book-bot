@@ -9,10 +9,11 @@ from google.cloud.firestore import Client as FirestoreClient
 
 class AccountHandler:
 
-	def __init__(self, firebase_admin: FirebaseAdminApp, firestore_client: FirestoreClient, logger: logging.Logger):
+	def __init__(self, firebase_admin: FirebaseAdminApp, firestore_client: FirestoreClient, logger: logging.Logger, email: str):
 		self.firebase_auth = FirebaseAuthClient(firebase_admin)
 		self.firestore_client = firestore_client
 		self.account_handler_logger = logger
+		self.bot_email = email
 
 	def create_new_user_account(self, user_registration: Dict):
 		try:
@@ -68,8 +69,9 @@ class AccountHandler:
 		return
 
 	def send_email(self, email, subject, body):
+		self.account_handler_logger.info("Sending email related to ${subject}")
 		self.firestore_client.collection("mail").add({
-			"from": "Resy Bot <noreply@rip-resy.firebaseapp.com>",
+			"from": f"Resy Bot <${self.bot_email}>",
 			"to": email,
 			"message": {
 				"subject": subject,
