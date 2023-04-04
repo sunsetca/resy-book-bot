@@ -69,9 +69,9 @@ class AccountHandler:
 		return
 
 	def send_email(self, email, subject, body):
-		self.account_handler_logger.info("Sending email related to ${subject}")
+		self.account_handler_logger.info(f"Sending email related to {subject}")
 		self.firestore_client.collection("mail").add({
-			"from": f"Resy Bot <${self.bot_email}>",
+			"from": f"Resy Bot <{self.bot_email}>",
 			"to": email,
 			"message": {
 				"subject": subject,

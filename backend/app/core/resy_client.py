@@ -53,9 +53,9 @@ class ResyClient:
 			confirmed_reservation = any(booking_resp['reservation_id'] == res['reservation_id'] for res in res_list['reservations'])
 
 		except BaseException as e:
-			excpetion_traceback = traceback.format_exc()
-			self.resy_client_logger.error("Unable to book {error}".format(error=excpetion_traceback))
-			return Response(response=str(excpetion_traceback), status=500)
+			exception_traceback = traceback.format_exc()
+			self.resy_client_logger.error("Unable to book {error}".format(error=exception_traceback))
+			return Response(response=str(exception_traceback), status=500)
 
 		self.resy_client_logger.info("Reservation status of booking for {uid} at {venue} is {res_status}"
 		                             .format(uid=payload['uid'], venue=payload['venue_id'],
@@ -80,6 +80,7 @@ class ResyClient:
 
 	def find_live_reservations(self, venue_query, retry_interval_ms):
 		# set timeout to 20s to account for early live, you want to hit the window AT that time
+		self.resy_client_logger.info(f"Attempting to find live reservations for: {venue_query}")
 		return poll(
 			lambda: self.resy_api.find_venue(venue_query),
 			check_success=lambda resp: len(resp.json()['results']['venues'][0]['slots']) > 0,

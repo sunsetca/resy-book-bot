@@ -21,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { auth, getResyToken } from './firebase';
 import { saveFirebaseUID, saveUser, saveResyToken, setLoading } from './redux/authSlice';
+import CheckResyToken from './components/user/CheckResyToken';
 
 
 const theme = createTheme(defaultTheme);
@@ -61,6 +62,11 @@ const router = createBrowserRouter([
       {
         path: "user/:userId/resy-auth/",
         element: <WrappedResyTokenForm/>,
+        errorElement: <ErrorPage/>
+      },
+      {
+        path: "user/:userId/check-token/",
+        element: <CheckResyToken/>,
         errorElement: <ErrorPage/>
       },
       {
