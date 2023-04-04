@@ -18,6 +18,9 @@ function AuthTokenHowTo() {
                 <AccordionDetails>
                     <Typography>
                         Open <Link href="https://resy.com/">Resy</Link> in a seperate tab or window and login with your Resy <code>username</code> and <code>password</code>.
+                        <br/>
+                        Please note that you must have an active payment method on file with Resy to be able to complete a booking. This applies to all restaurants, even if they
+                        do not charge for cancellations.
                     </Typography>
                 </AccordionDetails>
             </Accordion>

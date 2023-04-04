@@ -13,7 +13,7 @@ async function loader({ params }) {
     return userData;
 }
 
-const Profile = () => {
+function Profile(){
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState(null);
     const [fetched, setFetched] = useState(false);

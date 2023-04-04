@@ -48,8 +48,19 @@ def delete_resy_token():
 @user_bp.route('/user-profile', methods=['GET'])
 def get_user_profile():
 	user_id = request.args.get('userId')
-	user = account_handler.get_user_account(user_id)
 	active_token = account_handler.valid_resy_token(user_id)
 	tasks = task_handler.active_tasks(user_id)
 
 	return Response(response=json.dumps({'tasks': tasks, 'activeToken': active_token}), status=200)
+
+
+@user_bp.route('/check-token', methods=['GET'])
+def check_token():
+	user_id = request.args.get('userId')
+	resy_token = account_handler.get_resy_token(user_id)
+	resp = resy_client.auth_check({"token": resy_token, "uid": user_id})
+	if resp.status_code == 200:
+		return Response(status=200)
+	else:
+		account_handler.remove_resy_token(user_id)
+		return Response(status=401)

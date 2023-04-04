@@ -13,6 +13,12 @@ async function getUserProfile(params) {
   return userProfile.data;
 };
 
+async function checkUserResyToken(params) {
+  let request_url = `/user/check-token?` + (new URLSearchParams(params).toString());
+  let response = await axios.get(request_url);
+  return response;
+}
+
 async function authorizeResyToken(formData) {
   let response = await axios.post('/user/authorize-resy', formData);
   return response;
@@ -80,6 +86,7 @@ function createFormPayload(formData) {
 export {
     authorizeResyToken,
     createBugReport,
+    checkUserResyToken,
     getUserProfile,
     requestReservationTask,
     searchVenue,
