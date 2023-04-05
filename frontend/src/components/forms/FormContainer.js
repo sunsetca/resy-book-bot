@@ -62,7 +62,7 @@ function FormContainer(props){
 }
 
 const WrappedRegistrationForm = () => {
-  return <FormContainer avatar={<AssignmentIndOutlinedIcon/>} form={<RegistrationForm/>} leftChild={<LoginWithOtherProviders action="Sign up"/>} callToAction="OR"/>
+  return <FormContainer avatar={<AssignmentIndOutlinedIcon/>} form={<RegistrationForm/>}/>
 }
 
 const WrappedResyResRequestForm = () => {
@@ -76,7 +76,7 @@ const WrappedResyTokenForm = () => {
 }
 
 const WrappedSignInForm = () => {
-  return <FormContainer avatar={<LockOutlinedIcon/>} form={<Login/>} leftChild={<LoginWithOtherProviders action="Login"/>} callToAction="OR"/>
+  return <FormContainer avatar={<LockOutlinedIcon/>} form={<Login/>}/>
 }
 
 const WrappedPasswordResetForm = () => {
